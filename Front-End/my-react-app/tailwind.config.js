@@ -13,11 +13,11 @@ export default {
       },
       keyframes: {
         slideIn: {
-          '0%': { transform: 'translateX(700px)', opacity: 1 },
+          '0%': { transform: 'translateX(670px)', opacity: 1 },
           '100%': { transform: 'translateX(0)', opacity: 1 },
         },
         slideOut: {
-          '0%': { transform: 'translateX(-700px)', opacity: 1 },
+          '0%': { transform: 'translateX(-670px)', opacity: 1 },
           '100%': { transform: 'translateX(0)', opacity: 1 },
         },
         slideIndiv: {
