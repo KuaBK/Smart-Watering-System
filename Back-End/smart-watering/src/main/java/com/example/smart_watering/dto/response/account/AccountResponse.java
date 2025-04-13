@@ -1,5 +1,6 @@
 package com.example.smart_watering.dto.response.account;
 
+import com.example.smart_watering.entity.account.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,5 +12,9 @@ import lombok.experimental.FieldDefaults;
 public class AccountResponse {
     String id;
     String email;
-    String role;
+    String firstName;
+    String lastName;
+    String phoneNumber;
+    String picture;
+    Role role;
 }

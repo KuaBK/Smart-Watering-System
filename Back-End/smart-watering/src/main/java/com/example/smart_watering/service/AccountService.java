@@ -136,7 +136,11 @@ public class AccountService {
         return AccountResponse.builder()
                 .id(account.getId())
                 .email(account.getEmail())
-                .role(account.getRole().name())
+                .picture(account.getPicture())
+                .firstName(account.getFirstName())
+                .lastName(account.getLastName())
+                .phoneNumber(account.getPhoneNumber())
+                .role(Role.FARMER)
                 .build();
     }
 
