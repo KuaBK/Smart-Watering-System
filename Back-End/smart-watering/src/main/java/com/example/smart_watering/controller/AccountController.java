@@ -31,7 +31,7 @@ public class AccountController {
     private static final String ACCOUNT_NOT_FOUND = "Account not found";
 
     // Create Account
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ApiResponse<AccountResponse>> createAccount(
             @Valid @RequestBody AccountCreationRequest accountRequest) {
         AccountResponse createdAccount = accountService.createAccount(accountRequest);

@@ -18,4 +18,9 @@ public class AccountCreationRequest {
 
     @Email
     String email;
+
+    String firstName;
+    String lastName;
+    String picture;
+    String phoneNumber;
 }

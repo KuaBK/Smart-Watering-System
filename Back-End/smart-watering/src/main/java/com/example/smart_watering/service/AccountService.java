@@ -50,6 +50,9 @@ public class AccountService {
         Account validAccount = Account.builder()
                 .role(Role.FARMER)
                 .email(accountRequest.getEmail())
+                .firstName(accountRequest.getFirstName())
+                .lastName(accountRequest.getLastName())
+                .phoneNumber(accountRequest.getPhoneNumber())
                 .build();
         validAccount.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
         Account savedAccount = accountRepository.save(validAccount);

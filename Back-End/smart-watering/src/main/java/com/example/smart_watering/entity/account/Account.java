@@ -2,9 +2,7 @@ package com.example.smart_watering.entity.account;
 
 import com.example.smart_watering.entity.Farm;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -30,6 +28,13 @@ public class Account {
     String firstName;
     String lastName;
     String picture;
+
+    @NotBlank(message = "Phone number cannot be blank")
+    @Pattern(
+            regexp = "^(03|05|07|08|09)\\d{8}$",
+            message = "Phone number must be 10 digits and start with a valid prefix (e.g., 03, 05, 07, 08, 09)")
+    @Column(unique = true)
+    String phoneNumber;
 
 
     @NotNull(message = "Password cannot be null")
