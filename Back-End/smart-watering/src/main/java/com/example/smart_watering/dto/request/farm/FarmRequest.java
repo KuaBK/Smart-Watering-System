@@ -12,9 +12,9 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FarmRequest {
-    private String name;
-    private String location;
-    private LocalDate createdAt;
-    private String ownerId;
-    private List<String> employeeIds;
+    String name;
+    String location;
+    LocalDate createdAt = LocalDate.now();
+    String ownerId;
+    List<String> employeeIds;
 }

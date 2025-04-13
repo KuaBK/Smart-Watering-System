@@ -42,19 +42,21 @@ public class JwtUtils {
         }
     }
 
-    public String getCurrentUsername() {
+    public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "UNKNOWN";
+            return null;
         }
 
         Object principal = authentication.getPrincipal();
 
-        return switch (principal) {
-            case UserDetails userDetails -> userDetails.getUsername();
-            case Jwt jwt -> jwt.getClaimAsString("sub");
-            default -> principal.toString();
-        };
+        if (principal instanceof Jwt jwt) {
+            return jwt.getClaimAsString("sub");
+        } else if (principal instanceof UserDetails userDetails) {
+            return userDetails.getUsername();
+        } else {
+            return principal.toString();
+        }
     }
 }
