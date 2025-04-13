@@ -3,7 +3,7 @@ import mailsvg from '../../assets/mail.svg';
 import locksvg from '../../assets/lock.svg';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from "react-toastify";
+// import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 // import { em, text } from 'framer-motion/client';

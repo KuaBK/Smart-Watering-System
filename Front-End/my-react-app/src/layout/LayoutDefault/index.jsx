@@ -6,9 +6,9 @@ const LayoutDefault = () => {
     return (
         <div className="flex flex-col h-screen w-full"> 
         <Header />
-        <div className="flex flex-row flex-1"> 
+        <div className="flex flex-row flex-1">
             <Sidebar />
-            <Outlet />
+            <Outlet/>
         </div>
         </div>
     );
