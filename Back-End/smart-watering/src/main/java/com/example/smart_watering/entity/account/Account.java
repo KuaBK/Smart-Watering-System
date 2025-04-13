@@ -1,11 +1,14 @@
 package com.example.smart_watering.entity.account;
 
+import com.example.smart_watering.entity.Farm;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -34,5 +37,8 @@ public class Account {
     String password;
 
     @Enumerated(EnumType.STRING)
-    com.example.smart_watering.entity.account.Role role;
+    Role role;
+
+    @ManyToMany(mappedBy = "employees")
+    private List<Farm> farms;
 }
