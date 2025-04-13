@@ -15,7 +15,8 @@ public enum ErrorCode {
     USER_NOT_EXISTED(1005, "Account not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You don't have permissions", HttpStatus.FORBIDDEN),
-    WRONG_PASSWORD(1008, "Your password is wrong", HttpStatus.BAD_REQUEST)
+    WRONG_PASSWORD(1008, "Your password is wrong", HttpStatus.BAD_REQUEST),
+    FARM_NOT_FOUND(1009, "Farm not found", HttpStatus.NOT_FOUND),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

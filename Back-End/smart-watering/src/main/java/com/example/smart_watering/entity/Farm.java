@@ -25,6 +25,7 @@ public class Farm {
     String location;
 
     private LocalDate createdAt;
+    String picture;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")
