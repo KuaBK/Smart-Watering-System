@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import com.example.smart_watering.dto.request.account.AccountCreationRequest;
 import com.example.smart_watering.dto.request.account.AccountUpdateRequest;
+import com.example.smart_watering.dto.request.account.PasswordUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
+import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.repository.AccountRepository;
 import com.example.smart_watering.service.AccountService;
 import jakarta.validation.Valid;
@@ -18,6 +20,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/account")
@@ -73,8 +76,8 @@ public class AccountController {
     // Update Account
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<AccountResponse>> updateAccount(
-            @PathVariable String id, @RequestBody AccountUpdateRequest accountRequest) {
-        AccountResponse updatedAccount = accountService.updateAccount(id, accountRequest);
+            @PathVariable String id, @RequestBody PasswordUpdateRequest accountRequest) {
+        AccountResponse updatedAccount = accountService.updatePassword(id, accountRequest);
         if (updatedAccount != null) {
             ApiResponse<AccountResponse> response = ApiResponse.<AccountResponse>builder()
                     .message("Account updated successfully")
@@ -104,6 +107,22 @@ public class AccountController {
                     .build();
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PostMapping("/{id}/avatar")
+    public ResponseEntity<String> updateAvatar(
+            @PathVariable String id,
+            @RequestParam("image") MultipartFile image) {
+        String imageUrl = accountService.updateAvatar(id, image);
+        return ResponseEntity.ok(imageUrl);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Account> updateAccountInfo(
+            @PathVariable String id,
+            @RequestBody @Valid AccountUpdateRequest request) {
+        Account updated = accountService.updateAccountInfo(id, request);
+        return ResponseEntity.ok(updated);
     }
 
 

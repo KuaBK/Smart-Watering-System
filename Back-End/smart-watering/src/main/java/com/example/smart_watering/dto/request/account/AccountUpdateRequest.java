@@ -1,21 +1,28 @@
 package com.example.smart_watering.dto.request.account;
 
-import jakarta.validation.constraints.Size;
-
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-@Data
-@Builder
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccountUpdateRequest {
 
-    String oldPassword;
+    @Email
+    String email;
 
-    @Size(min = 8, message = "INVALID_PASSWORD")
-    String newPassword;
+    String firstName;
 
-    String confirmPassword;
+    String lastName;
+
+    @Pattern(
+            regexp = "^(03|05|07|08|09)\\d{8}$",
+            message = "Phone number must be 10 digits and start with a valid prefix (03, 05, 07, 08, 09)")
+    String phoneNumber;
 }

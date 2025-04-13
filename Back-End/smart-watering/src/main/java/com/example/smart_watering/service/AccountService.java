@@ -1,16 +1,20 @@
 package com.example.smart_watering.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.smart_watering.dto.request.account.AccountCreationRequest;
 import com.example.smart_watering.dto.request.account.AccountUpdateRequest;
+import com.example.smart_watering.dto.request.account.PasswordUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
-import com.example.smart_watering.dto.response.authentication.AuthenticationResponse;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.entity.account.PasswordResetToken;
 import com.example.smart_watering.entity.account.Role;
@@ -28,6 +32,7 @@ import org.springframework.stereotype.Service;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +43,7 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenRepository tokenRepository;
     private final JavaMailSender mailSender;
+    private final Cloudinary cloudinary;
 
     private static final Random RANDOM = new Random();
 
@@ -70,7 +76,26 @@ public class AccountService {
         return account.map(this::mapToAccountResponse);
     }
 
-    public AccountResponse updateAccount(String id, AccountUpdateRequest accountRequest) {
+    public String updateAvatar(String accountId, MultipartFile file) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        try {
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                    ObjectUtils.asMap("folder", "avatars"));
+
+            String imageUrl = uploadResult.get("secure_url").toString();
+            account.setPicture(imageUrl);
+            accountRepository.save(account);
+
+            return imageUrl;
+
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload avatar", e);
+        }
+    }
+
+    public AccountResponse updatePassword(String id, PasswordUpdateRequest accountRequest) {
         Optional<Account> accountOpt = accountRepository.findById(id);
         if (accountOpt.isPresent()) {
             Account account = accountOpt.get();
@@ -85,6 +110,19 @@ public class AccountService {
         }
         return null;
     }
+
+    public Account updateAccountInfo(String id, AccountUpdateRequest request) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+
+        if (request.getEmail() != null) account.setEmail(request.getEmail());
+        if (request.getFirstName() != null) account.setFirstName(request.getFirstName());
+        if (request.getLastName() != null) account.setLastName(request.getLastName());
+        if (request.getPhoneNumber() != null) account.setPhoneNumber(request.getPhoneNumber());
+
+        return accountRepository.save(account);
+    }
+
 
     public boolean deleteAccount(String id) {
         if (accountRepository.existsById(id)) {
