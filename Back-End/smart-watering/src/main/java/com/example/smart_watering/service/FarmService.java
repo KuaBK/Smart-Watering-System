@@ -10,9 +10,15 @@ import com.example.smart_watering.exception.AppException;
 import com.example.smart_watering.exception.ErrorCode;
 import com.example.smart_watering.repository.AccountRepository;
 import com.example.smart_watering.repository.FarmRepository;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +26,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -27,6 +34,7 @@ public class FarmService {
     private final FarmRepository farmRepository;
     private final AccountRepository accountRepository;
     final Cloudinary cloudinary;
+    private final JavaMailSender mailSender;
 
     public FarmResponse create(FarmRequest dto) {
         Farm farm = new Farm();
@@ -100,6 +108,12 @@ public class FarmService {
             farm.getEmployees().add(employee);
             farmRepository.save(farm);
         }
+
+        try {
+            sendGardenNotificationEmail(employee.getEmail(), farm.getName(), true);
+        } catch (MessagingException e) {
+            log.error("Failed to send email: " + e.getMessage());
+        }
     }
 
     public void removeEmployeeFromFarm(Long farmId, String employeeId) {
@@ -113,6 +127,32 @@ public class FarmService {
             farm.getEmployees().remove(employee);
             farmRepository.save(farm);
         }
+        try {
+            sendGardenNotificationEmail(employee.getEmail(), farm.getName(), false);
+        } catch (MessagingException e) {
+            log.error("Failed to send email: " + e.getMessage());
+        }
+    }
+
+    public void sendEmail(@Email String to, String subject, String text) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+        helper.setTo(to);
+        helper.setSubject(subject);
+        helper.setText(text);
+        helper.setFrom("tuanphonglqd@gmail.com");
+
+        mailSender.send(message);
+    }
+
+    public void sendGardenNotificationEmail(String email, String gardenName, boolean added) throws MessagingException {
+        String subject = added ? "You've been added to a garden" : "You've been removed from a garden";
+        String message = added
+                ? String.format("Hi,%n%nYou have been added to the garden: %s.%nWelcome and happy planting! 🌱", gardenName)
+                : String.format("Hi,%n%nYou have been removed from the garden: %s.%nHope to see you again!", gardenName);
+
+        sendEmail(email, subject, message);
     }
 
 

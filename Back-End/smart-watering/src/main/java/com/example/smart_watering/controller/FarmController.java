@@ -10,6 +10,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -69,5 +70,11 @@ public class FarmController {
                                                  @PathVariable String employeeId) {
         farmService.removeEmployeeFromFarm(farmId, employeeId);
         return new ApiResponse<>(200, "Employee removed from farm", null);
+    }
+
+    @PostMapping("/{id}/avatar")
+    public ApiResponse<String> updateAvatar(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
+        farmService.updatePicture(id, image);
+        return new ApiResponse<>(200, "Update farm success", null);
     }
 }
