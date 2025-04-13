@@ -7,18 +7,19 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-import com.example.smart_watering.dto.request.authentication.AuthenticationRequest;
-import com.example.smart_watering.dto.request.authentication.IntrospectRequest;
-import com.example.smart_watering.dto.request.authentication.LogOutRequest;
-import com.example.smart_watering.dto.request.authentication.RefreshRequest;
+
+import com.example.smart_watering.dto.request.authentication.*;
 import com.example.smart_watering.dto.response.authentication.AuthenticationResponse;
 import com.example.smart_watering.dto.response.authentication.IntrospectResponse;
 import com.example.smart_watering.entity.InvalidatedToken;
 import com.example.smart_watering.entity.account.Account;
+import com.example.smart_watering.entity.account.Role;
 import com.example.smart_watering.exception.AppException;
 import com.example.smart_watering.exception.ErrorCode;
 import com.example.smart_watering.repository.AccountRepository;
 import com.example.smart_watering.repository.InvalidatedTokenRepository;
+import com.example.smart_watering.repository.OutboundIdentityClient;
+import com.example.smart_watering.repository.OutboundAccountClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -43,6 +44,8 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthenticationService {
     AccountRepository accountRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    OutboundIdentityClient outboundClient;
+    OutboundAccountClient outboundClientUser;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -55,6 +58,21 @@ public class AuthenticationService {
     @NonFinal
     @Value("${jwt.refreshable-duration}")
     protected long refreshableDuration;
+
+    @NonFinal
+    @Value("${outbound.clientId}")
+    protected String clientId;
+
+    @NonFinal
+    @Value("${outbound.clientSecret}")
+    protected String clientSecret;
+
+    @NonFinal
+    @Value("${outbound.redirectURI}")
+    protected String redirectURI;
+
+    @NonFinal
+    protected final String GRANT_TYPE = "authorization_code";
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
@@ -72,7 +90,7 @@ public class AuthenticationService {
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         var user = accountRepository
-                .findByUsername(request.getUsername())
+                .findByEmail(request.getEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         boolean authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
@@ -100,7 +118,7 @@ public class AuthenticationService {
 
         var username = signJWT.getJWTClaimsSet().getSubject();
         var user = accountRepository
-                .findByUsername(username)
+                .findByEmail(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
 
         var token = generateToken(user);
@@ -115,12 +133,11 @@ public class AuthenticationService {
     private TokenInfo generateToken(Account account) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         Date issueTime = new Date();
-        Date expiryTime = new Date(Instant.ofEpochMilli(issueTime.getTime())
-                .plus(1, ChronoUnit.HOURS)
-                .toEpochMilli());
+        Date expiryTime = new Date(
+                Instant.now().plus(validDuration, ChronoUnit.SECONDS).toEpochMilli());
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(account.getUsername())
+                .subject(account.getEmail())
                 .issuer("Phong.com")
                 .issueTime(issueTime)
                 .expirationTime(expiryTime)
@@ -193,4 +210,33 @@ public class AuthenticationService {
     }
 
     private record TokenInfo(String token, Date expiryDate) {}
+
+    public AuthenticationResponse outbound(String code){
+        var response = outboundClient.exchangeToken(ExchangeTokenRequest.builder()
+                        .code(code)
+                        .clientId(clientId)
+                        .clientSecret(clientSecret)
+                        .redirectUri(redirectURI)
+                        .grantType(GRANT_TYPE)
+                .build());
+
+        var userInfo = outboundClientUser.getUserInfo("json", response.getAccessToken());
+
+        accountRepository.findByEmail(userInfo.getEmail()).orElseGet(
+                () -> accountRepository.save(Account.builder()
+                        .email(userInfo.getEmail())
+                        .firstName(userInfo.getGivenName())
+                        .lastName(userInfo.getFamilyName())
+                        .picture(userInfo.getPicture())
+                        .role(Role.FARMER)
+                        .password("12345678")
+                        .build()));
+
+        log.info("User Info {}", userInfo);
+
+
+        return  AuthenticationResponse.builder()
+                .token(response.getAccessToken())
+                .build();
+    }
 }

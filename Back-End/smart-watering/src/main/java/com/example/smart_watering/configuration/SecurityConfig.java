@@ -1,6 +1,5 @@
 package com.example.smart_watering.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -12,6 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -19,37 +21,12 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private static final String[] PUBLIC_ENDPOINTS = {
-        "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh",
-
-        "/account/myInfo", "/account", "/account/{id}",
-
-        "/salesperson", "/salesperson/{id}",
-
-        "/customers", "/customers/{customerId}", "/customers/avatar/{customerId}",
-
-        "/products", "/products/{productId}", "/products/category/{categoryId}", "/products/all", "/products/{productId}/category/{categoryId}",
-        "/products/{productId}/category", "/products/search", "/products/{productId}/images", "/products/filter",
-
-        "/categories", "/categories/{categoryId}",
-
-        "/cart/add", "/cart/remove", "/cart/allItems", "/cart/quantity",
-
-        "/order/create", "/order/all", "/order/details", "/order/cancel",
-
-        "/address", "/address/{id}",
-
-        "/invoice", "/invoice/{id}", "/invoice/{id}/cancel", "/invoice/{invoiceId}/details",
-
-        "/payment/create", "/payment",
-
-        "/images/upload",
-
-        "/discounts", "/discounts/{discountId}", "/discounts/product/{productId}"
+            "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh", "/auth/outbound",
+            "/account/forgot-password", "/account/confirm-otp", "/account/reset-password",
     };
 
     private final CustomJwtDecoder customJwtDecoder;
 
-    @Autowired
     public SecurityConfig(CustomJwtDecoder customJwtDecoder) {
         this.customJwtDecoder = customJwtDecoder;
     }
@@ -84,5 +61,16 @@ public class SecurityConfig {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
+    }
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+        config.addAllowedOrigin("*");
+        config.addAllowedHeader("*");
+        config.addAllowedMethod("*");
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
     }
 }

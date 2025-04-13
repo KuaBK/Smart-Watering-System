@@ -2,7 +2,12 @@ package com.example.smart_watering.utils;
 
 import java.text.ParseException;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import com.nimbusds.jose.*;
@@ -13,6 +18,7 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.experimental.NonFinal;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
 
     @NonFinal
@@ -34,5 +40,21 @@ public class JwtUtils {
         } catch (ParseException | JOSEException e) {
             throw new IllegalArgumentException("Token is invalid", e);
         }
+    }
+
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "UNKNOWN";
+        }
+
+        Object principal = authentication.getPrincipal();
+
+        return switch (principal) {
+            case UserDetails userDetails -> userDetails.getUsername();
+            case Jwt jwt -> jwt.getClaimAsString("sub");
+            default -> principal.toString();
+        };
     }
 }

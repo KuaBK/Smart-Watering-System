@@ -1,20 +1,40 @@
 server:
-  port: 8080
-  servlet:
-    context-path: /api
+    port: 8080
 
 spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/smart-watering
-    driverClassName: "com.mysql.cj.jdbc.Driver"
-    username: root
-    password: root
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+    datasource:
+        url: ${DATABASE_URL}
+        driverClassName: "com.mysql.cj.jdbc.Driver"
+        username: ${DATABASE_USERNAME}
+        password: ${DATABASE_PASSWORD}
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: ${MAIL_USERNAME}
+        password: ${MAIL_PASSWORD}
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+                        required: true
 
 jwt:
-  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
-  valid-duration: 3600 #seconds
-  refreshable-duration: 36000 #seconds
+    signerKey:  ${JWT_SIGNER_KEY}
+    valid-duration: ${JWT_VALID_DURATION} #seconds
+    refreshable-duration: ${JWT_REFRESHABLE_DURATION} #seconds
+
+cloudinary:
+    cloud_name: ${CLOUDINARY_CLOUD_NAME}
+    api_key: ${CLOUDINARY_API_KEY}
+    api_secret: ${CLOUDINARY_API_SECRET}
+
+outbound:
+    clientId: ${CLIENT_ID}
+    clientSecret: ${CLIENT_SECRET}
+    redirectURI: ${REDIRECT_URI}

@@ -1,5 +1,8 @@
 package com.example.smart_watering.exception;
 
+import lombok.Getter;
+
+@Getter
 public class AppException extends RuntimeException {
 
     public AppException(ErrorCode errorCode) {
@@ -7,9 +10,5 @@ public class AppException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    private ErrorCode errorCode;
-
-    public ErrorCode getErrorCode() {
-        return errorCode;
-    }
+    private final ErrorCode errorCode;
 }

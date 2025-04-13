@@ -7,6 +7,7 @@ import com.example.smart_watering.dto.request.account.AccountCreationRequest;
 import com.example.smart_watering.dto.request.account.AccountUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
+import com.example.smart_watering.repository.AccountRepository;
 import com.example.smart_watering.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AccountController {
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
+
+    private static final String ACCOUNT_NOT_FOUND = "Account not found";
 
     // Create Account
     @PostMapping
@@ -61,7 +65,7 @@ public class AccountController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         ApiResponse<AccountResponse> response = ApiResponse.<AccountResponse>builder()
-                .message("Account not found")
+                .message(ACCOUNT_NOT_FOUND)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -79,7 +83,7 @@ public class AccountController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         }
         ApiResponse<AccountResponse> response = ApiResponse.<AccountResponse>builder()
-                .message("Account not found")
+                .message(ACCOUNT_NOT_FOUND)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
@@ -96,9 +100,29 @@ public class AccountController {
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
             response = ApiResponse.<Void>builder()
-                    .message("Account not found")
+                    .message(ACCOUNT_NOT_FOUND)
                     .build();
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<String>> sendResetCode(@RequestParam String email) {
+        if(accountRepository.findByEmail(email).isEmpty()){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        String message = accountService.sendResetCode(email);
+        return ResponseEntity.ok(new ApiResponse<>(200, message, null));
+    }
+
+    @PostMapping("/confirm-otp")
+    public ResponseEntity<ApiResponse<String>> confirmOtp(@RequestParam String otp, @RequestParam String email) {
+        return ResponseEntity.ok(accountService.confirmOTP(otp, email));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String newPassword, @RequestParam String confirmPassword) {
+        return ResponseEntity.ok(accountService.resetPassword(email, newPassword, confirmPassword));
     }
 }
