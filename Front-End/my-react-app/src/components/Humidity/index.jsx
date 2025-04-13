@@ -92,21 +92,26 @@ const Humidity = () => {
 
                     {/* Dynamic Controls Based on Mode */}
                     {mode === 'overTime' && (
-                        <div className="mb-6">
-                            <label className="block text-lg font-semibold mb-2">Bắt đầu</label>
-                            <input
-                                type="time"
-                                value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)} // Update start time
-                                className="w-full p-2 border border-green-300 rounded-lg mb-4"
-                            />
-                            <label className="block text-lg font-semibold mb-2">Kết thúc</label>
-                            <input
-                                type="time"
-                                value={endTime}
-                                onChange={(e) => setEndTime(e.target.value)} // Update end time
-                                className="w-full p-2 border border-green-300 rounded-lg"
-                            />
+                        <div className="mb-6 flex justify-between">
+                            <div className='flex gap-[20px]'>
+                                <label className="flex text-lg font-semibold whitespace-nowrap items-center">Bắt đầu:</label>
+                                <input
+                                    type="time"
+                                    value={startTime}
+                                    onChange={(e) => setStartTime(e.target.value)} // Update start time
+                                    className="w-[200px] p-2 border border-green-300 bg-[rgba(151,251,166,1)] rounded-[15px]"
+                                />
+                            </div>
+                            <div className='flex gap-[20px]'>
+
+                                <label className="flex items-center text-lg font-semibold whitespace-nowrap">Kết thúc:</label>
+                                <input
+                                    type="time"
+                                    value={endTime}
+                                    onChange={(e) => setEndTime(e.target.value)} // Update end time
+                                    className="w-[200px] p-2 border border-green-300 bg-[rgba(151,251,166,1)] rounded-[15px]"
+                                />
+                            </div>
                         </div>
                     )}
 
@@ -160,7 +165,7 @@ const Humidity = () => {
                     <div>
                         <div className="grid grid-cols-2 gap-4">
                             {/* Machine 1 */}
-                            <Equipment name={"abc"} img={Pump}/>
+                            <Equipment name={"abc"} img={Pump}  />
 
                             {/* Machine 2 */}
                             <div className="flex flex-col items-center bg-green-200 p-4 rounded-lg">

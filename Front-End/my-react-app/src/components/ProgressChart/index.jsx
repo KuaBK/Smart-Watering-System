@@ -36,10 +36,10 @@ const ProgressChart = ({value,min,max}) => {
           {value}%
         </div>
       </div>
-      <p className="text-black font-semibold text-[30px] my-[20px]">Khoảng thuận lợi</p>
+      {/* <p className="text-black font-semibold text-[30px] my-[20px]">Khoảng thuận lợi</p>
       <div className="flex justify-center items-center mt-2 bg-[rgba(135,255,167,1)] text-[rgba(11,115,34,1)] font-[600] text-[50px] rounded-[30px] w-[320px] h-[90px] ">
         {min}% - {max}%
-      </div>
+      </div> */}
     </div>
   );
 
