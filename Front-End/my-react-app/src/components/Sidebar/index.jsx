@@ -1,5 +1,5 @@
 import home from '../../assets/home.svg'
-import thermometer from '../../assets/thermometer.svg'
+// import thermometer from '../../assets/thermometer.svg'
 import droplet from '../../assets/droplet.svg'
 import sun from '../../assets/sun.svg'
 import pieChart from '../../assets/pie-chart.svg'
@@ -12,13 +12,13 @@ const Sidebar = () => {
             <img className='fill-white ' src={home} alt="" />
             <div className='font-baloo font-[500] text-[30px] text-white '>Tổng quan</div>
         </NavLink>
-        <NavLink className="flex justify-start gap-[20px] border-b-[1px] border-[#fff] py-[20px] px-[20px]" to='temperature'>
-            <img className='fill-white ' src={thermometer} alt="" />
-            <div className='font-baloo font-[500] text-[30px] text-white '>Nhiệt độ</div>
-        </NavLink>
-        <NavLink className="flex justify-start gap-[20px] border-b-[1px] border-[#fff] py-[20px] px-[20px]" to='humidity'>
+        <NavLink className="flex justify-start gap-[20px] border-b-[1px] border-[#fff] py-[20px] px-[20px]" to='soldMoisture'>
             <img className='fill-white ' src={droplet} alt="" />
-            <div className='font-baloo font-[500] text-[30px] text-white '>Độ Ẩm</div>
+            <div className='font-baloo font-[500] text-[30px] text-white '>Độ ẩm đất</div>
+        </NavLink>
+        <NavLink className="flex justify-start gap-[20px] border-b-[1px] border-[#fff] py-[20px] px-[20px]" to='airHumidity'>
+            <img className='fill-white ' src={droplet} alt="" />
+            <div className='font-baloo font-[500] text-[30px] text-white '>Độ ẩm không khí</div>
         </NavLink>
         <NavLink className="flex justify-start gap-[20px] border-b-[1px] border-[#fff] py-[20px] px-[20px]" to='light'>
             <img className='fill-white ' src={sun} alt="" />

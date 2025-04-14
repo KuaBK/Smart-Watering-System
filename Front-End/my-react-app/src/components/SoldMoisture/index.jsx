@@ -3,9 +3,9 @@ import ProgressChart from '../ProgressChart';
 import up from '../../assets/chevron-up.svg'
 import down from '../../assets/chevron-down.svg'
 import Equipment from '../Equipment';
-import light from '../../assets/light.svg'
+import Pump from '../../assets/pump.svg'
 
-const Light = () => {
+const SoldMoisture = () => {
     // const [selectedGarden, setSelectedGarden] = useState(1); // Track the selected garden
     const [mode, setMode] = useState('overTime'); // Track the selected mode
     const [machine1, setMachine1] = useState(false); // Machine 1 state
@@ -91,8 +91,8 @@ const Light = () => {
                             </div>
                             <div className="flex gap-[20px] w-full overflow-auto ">
                                 {/* Machine 1 */}
-                                <Equipment name={"abc"} img={light} status={machine1} setStatus={setMachine1} />
-                                <Equipment name={"abc"} img={light} status={machine1} setStatus={setMachine1} />
+                                <Equipment name={"abc"} img={Pump} status={machine1} setStatus={setMachine1} />
+                                <Equipment name={"abc"} img={Pump} status={machine1} setStatus={setMachine1} />
 
                                 {/* Machine 2 */}
                             </div>
@@ -103,8 +103,8 @@ const Light = () => {
                     {mode === 'overTime' && (
                         <div className='flex flex-col items-start'>
                             <div className="flex gap-[20px] w-full overflow-auto ">
-                                <Equipment name={"abc"} img={light} status={machine1} setStatus={setMachine1} />
-                                <Equipment name={"abc"} img={light} status={machine1} setStatus={setMachine1} />
+                                <Equipment name={"abc"} img={Pump} status={machine1} setStatus={setMachine1} />
+                                <Equipment name={"abc"} img={Pump} status={machine1} setStatus={setMachine1} />
 
                             </div>
 
@@ -136,42 +136,42 @@ const Light = () => {
                     {mode === 'overSensor' && (
                         <div className="mb-6 flex flex-col justify-between w-full h-[80%]">
                             <div className='flex gap-[20px]'>
-                                <label className="block text-start text-[30px] font-[400] mb-2 whitespace-nowrap w-[250px] ">Bật đèn khi</label>
+                                <label className="block text-start text-[30px] font-[400] mb-2 whitespace-nowrap w-[250px] ">Bơm nước khi</label>
                                 <div ref={dropdownStart}
                                     className="relative border border-black rounded-[15px] flex-1 bg-[#89FF9A] px-[20px] cursor-pointer text-start flex items-center h-[45px] text-[25px]"
                                     onClick={() => setisOpenStart(!isOpenStart)}
                                 >
-                                    Cường độ ánh sáng &lt; {startThreshold === "10" ? "10" : startThreshold === "20" ? "20" : "30"} %
+                                    Độ ẩm đất &lt; {startThreshold === "10" ? "10" : startThreshold === "20" ? "20" : "30"} %
 
                                     <img className='absolute top-2.5 right-2' src={isOpenStart ? up : down} alt="" />
 
 
                                     {isOpenStart && (
                                         <ul className="z-10 absolute top-[100%] left-0 border border-black bg-white w-[100%] ">
-                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${startThreshold == "10" && "bg-[#C8F0D0]"}`} onClick={() => { setStartThreshold("10"); isOpenStart(false); }}>Cường độ ánh sáng &lt; 10%</li>
-                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${startThreshold == "20" && "bg-[#C8F0D0]"}`} onClick={() => { setStartThreshold("20"); isOpenStart(false); }}>Cường độ ánh sáng &lt; 20%</li>
-                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${startThreshold == "30" && "bg-[#C8F0D0]"}`} onClick={() => { setStartThreshold("30"); isOpenStart(false); }}>Cường độ ánh sáng &lt; 30%</li>
+                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${startThreshold == "10" && "bg-[#C8F0D0]"}`} onClick={() => { setStartThreshold("10"); isOpenStart(false); }}>Độ ẩm đất &lt; 10%</li>
+                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${startThreshold == "20" && "bg-[#C8F0D0]"}`} onClick={() => { setStartThreshold("20"); isOpenStart(false); }}>Độ ẩm đất &lt; 20%</li>
+                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${startThreshold == "30" && "bg-[#C8F0D0]"}`} onClick={() => { setStartThreshold("30"); isOpenStart(false); }}>Độ ẩm đất &lt; 30%</li>
                                         </ul>
                                     )}
                                 </div>
                             </div>
 
                             <div className='flex gap-[20px]'>
-                                <label className="block text-start text-[30px] font-[400] mb-2 whitespace-nowrap w-[250px] ">Tắt đèn khi</label>
+                                <label className="block text-start text-[30px] font-[400] mb-2 whitespace-nowrap w-[250px] ">Ngừng bơm khi</label>
                                 <div ref={dropdownEnd}
                                     className="relative border border-black rounded-[15px] flex-1 bg-[#89FF9A] px-[20px] cursor-pointer text-start flex items-center h-[45px] text-[25px]"
                                     onClick={() => setisOpenEnd(!isOpenEnd)}
                                 >
-                                    Cường độ ánh sáng &gt; {stopThreshold === "10" ? "10" : stopThreshold === "20" ? "20" : "30"} %
+                                    Độ ẩm đất &gt; {stopThreshold === "10" ? "10" : stopThreshold === "20" ? "20" : "30"} %
 
                                     <img className='absolute top-2.5 right-2' src={isOpenEnd ? up : down} alt="" />
 
 
                                     {isOpenEnd && (
                                         <ul className="absolute top-[100%] left-0 border border-black bg-white w-[100%] ">
-                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${stopThreshold == "10" && "bg-[#C8F0D0]"}`} onClick={() => { setStopThreshold("10"); isOpenEnd(false); }}>Cường độ ánh sáng &gt; 10%</li>
-                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${stopThreshold == "20" && "bg-[#C8F0D0]"}`} onClick={() => { setStopThreshold("20"); isOpenEnd(false); }}>Cường độ ánh sáng &gt; 20%</li>
-                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${stopThreshold == "30" && "bg-[#C8F0D0]"}`} onClick={() => { setStopThreshold("30"); isOpenEnd(false); }}>Cường độ ánh sáng &gt; 30%</li>
+                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${stopThreshold == "10" && "bg-[#C8F0D0]"}`} onClick={() => { setStopThreshold("10"); isOpenEnd(false); }}>Độ ẩm đất &gt; 10%</li>
+                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${stopThreshold == "20" && "bg-[#C8F0D0]"}`} onClick={() => { setStopThreshold("20"); isOpenEnd(false); }}>Độ ẩm đất &gt; 20%</li>
+                                            <li className={`px-[20px] h-[45px] flex items-center text-[25px]  hover:bg-[#C8F0D0] ${stopThreshold == "30" && "bg-[#C8F0D0]"}`} onClick={() => { setStopThreshold("30"); isOpenEnd(false); }}>Độ ẩm đất &gt; 30%</li>
                                         </ul>
                                     )}
                                 </div>
@@ -188,4 +188,4 @@ const Light = () => {
     );
 };
 
-export default Light;
+export default SoldMoisture;

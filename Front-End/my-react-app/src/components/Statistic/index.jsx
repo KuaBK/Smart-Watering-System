@@ -13,9 +13,7 @@ const Statistic = () => {
 
 
 
-    //  qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
     const [client, setClient] = useState(null);
-    // const [status, setStatus] = useState(0);
 
     const AIO_USERNAME = 'sonwoang';           // 🔁 Đổi thành username của bạn
     const AIO_KEY = iokey;     // 🔁 Đổi thành AIO Key
@@ -187,7 +185,7 @@ const Statistic = () => {
         return () => clearInterval(interval);
     }, []);
     return (
-        <div className="flex justify-around items-center w-full h-[100%]">
+        <div className="flex justify-around items-center flex-1 h-[100%] max-w-[calc(100%-333px)] w-[calc(100%-333px)]">
             <div className="flex flex-col justify-center items-center w-[90%] h-full p-[20px] gap-[100px]">
                 <div className="flex justify-center w-full h-[30%] gap-[50px]">
                     <div className="text-center flex flex-col items-center justify-center text-white bg-[#4FC3F7] p-5 rounded-lg w-[500px] ">

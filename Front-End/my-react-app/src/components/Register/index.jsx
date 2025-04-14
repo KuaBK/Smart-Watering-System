@@ -77,7 +77,7 @@ function Register() {
         });
         navigate('/signin');
       }
-    } catch (error) {
+    } catch  {
       Swal.fire({
         title: "Thất bại!",
         text: `"Đã xảy ra lỗi, vui lòng thử lại."`,

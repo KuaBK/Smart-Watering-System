@@ -4,12 +4,12 @@ import Header from "../../components/Header";
 
 const LayoutDefault = () => {
     return (
-        <div className="flex flex-col h-screen w-full"> 
-        <Header />
-        <div className="flex flex-row flex-1">
-            <Sidebar />
-            <Outlet/>
-        </div>
+        <div className="flex flex-col h-screen w-full">
+            <Header />
+            <div className="flex flex-row flex-1 max-w-[100%] h-[100%]">
+                <Sidebar />
+                <Outlet />
+            </div>
         </div>
     );
 }

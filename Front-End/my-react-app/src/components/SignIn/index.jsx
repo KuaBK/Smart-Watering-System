@@ -93,11 +93,19 @@ function SignIn() {
         // setCVProfile(response.data.data)
         localStorage.setItem("jwtToken", response.data.result.token);
         navigate('/user');
+      }else {
+        Swal.fire({
+          title: "Thất bại!",
+          text: `Tài khoản mật khẩu chưa đúng.`,
+          showConfirmButton: false,
+          icon: "warning",
+          timer: 3000
+        });
       }
-    } catch (error) {
+    } catch {
       Swal.fire({
         title: "Thất bại!",
-        text: `${error}"Tài khoản hoặc mật khẩu chưa đúng vui lòng thử lại."`,
+        text: `Đã xảy ra lỗi, vui lòng thử lại.`,
         showConfirmButton: false,
         icon: "warning",
         timer: 3000
