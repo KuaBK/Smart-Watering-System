@@ -81,8 +81,12 @@ public class FarmService {
         return toResponseDto(farm);
     }
 
-    public void delete(Long id) {
+    public boolean delete(Long id) {
+        Farm farm = farmRepository.findById(id).orElseThrow(() -> new RuntimeException("Farm not found"));
+        if(farm != null) {
         farmRepository.deleteById(id);
+        return true;}
+        else return false;
     }
 
     public FarmResponse getById(Long id) {
@@ -153,6 +157,13 @@ public class FarmService {
                 : String.format("Hi,%n%nYou have been removed from the garden: %s.%nHope to see you again!", gardenName);
 
         sendEmail(email, subject, message);
+    }
+
+    public List<Account> getEmployeesNotInFarm(Long farmId) {
+        Farm farm = farmRepository.findById(farmId)
+                .orElseThrow(() -> new RuntimeException("Farm not found"));
+
+        return accountRepository.findAllNotInFarm(farm.getOwner(), farm.getEmployees());
     }
 
 

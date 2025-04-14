@@ -15,6 +15,7 @@ import com.example.smart_watering.dto.request.account.AccountUpdateRequest;
 import com.example.smart_watering.dto.request.account.PasswordUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
+import com.example.smart_watering.dto.response.account.ResetPasswordResponse;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.entity.account.PasswordResetToken;
 import com.example.smart_watering.entity.account.Role;
@@ -187,17 +188,17 @@ public class AccountService {
     }
 
     @Transactional
-    public String resetPassword(@Email String email, String newPassword, String confirmPassword) {
-        Optional<Account> accountOpt = accountRepository.findByEmail(email);
+    public String resetPassword(ResetPasswordResponse response) {
+        Optional<Account> accountOpt = accountRepository.findByEmail(response.getEmail());
         if (accountOpt.isEmpty()) {
             return "Email is not exist!";
         }
 
         Account account = accountOpt.get();
-        if(newPassword.equals(confirmPassword)) {
-            account.setPassword(passwordEncoder.encode(newPassword));
+        if(response.getNewPassword().equals(response.getConfirmPassword())) {
+            account.setPassword(passwordEncoder.encode(response.getNewPassword()));
             accountRepository.save(account);
-            tokenRepository.deleteByEmail(email);
+            tokenRepository.deleteByEmail(response.getEmail());
             return "Successful";
         }
         else {return "Password isn't match";}

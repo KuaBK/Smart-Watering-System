@@ -8,12 +8,15 @@ import com.example.smart_watering.dto.request.account.AccountUpdateRequest;
 import com.example.smart_watering.dto.request.account.PasswordUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
+import com.example.smart_watering.dto.response.account.ResetPasswordResponse;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.repository.AccountRepository;
 import com.example.smart_watering.service.AccountService;
+import com.example.smart_watering.utils.JwtUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
@@ -30,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class AccountController {
     private final AccountService accountService;
     private final AccountRepository accountRepository;
+    final JwtUtils jwtUtils;
 
     private static final String ACCOUNT_NOT_FOUND = "Account not found";
 
@@ -91,6 +95,24 @@ public class AccountController {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
 
+    @GetMapping("/myInfo")
+    public ResponseEntity<ApiResponse<AccountResponse>> getMyAccounts() {
+        Account account = accountRepository.findByEmail(jwtUtils.getCurrentUserEmail()).orElseThrow(
+                () -> new RuntimeException(ACCOUNT_NOT_FOUND)
+        );
+        AccountResponse response = AccountResponse.builder()
+                .id(account.getId())
+                .email(account.getEmail())
+                .phoneNumber(account.getPhoneNumber())
+                .firstName(account.getFirstName())
+                .lastName(account.getLastName())
+                .picture(account.getPicture())
+                .role(account.getRole())
+                .build();
+//        response.setNoPassword(!StringUtils.hasText(account.getPassword()));
+        return ResponseEntity.ok(new  ApiResponse<>(200, "Your info", response));
+    }
+
     // Delete Account
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteAccount(@PathVariable String id) {
@@ -141,7 +163,7 @@ public class AccountController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String newPassword, @RequestParam String confirmPassword) {
-        return ResponseEntity.ok(accountService.resetPassword(email, newPassword, confirmPassword));
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordResponse response) {
+        return ResponseEntity.ok(accountService.resetPassword(response));
     }
 }
