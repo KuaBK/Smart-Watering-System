@@ -100,6 +100,7 @@ public class AuthenticationService {
         var token = generateToken(user);
 
         return AuthenticationResponse.builder()
+                .userId(user.getId())
                 .token(token.token)
                 .expiryTime(token.expiryDate)
                 .authenticated(true)
