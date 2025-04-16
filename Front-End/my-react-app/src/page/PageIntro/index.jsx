@@ -50,7 +50,7 @@ const PageIntro = () => {
     return (
         <>
             <Header />
-            <div className="flex flex-wrap justify-center items-center w-full h-[100%] m-[50px]">
+            <div className="flex flex-wrap justify-start items-center w-full h-[100%] m-[50px]">
                 <Garden name="Garden 1" tem={25} sold={50} lig={75} air={100} />
             </div>
         </>

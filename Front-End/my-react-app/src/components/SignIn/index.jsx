@@ -21,6 +21,9 @@ function SignIn() {
   const naviSignUp = () => {
     navigate('/register');
   }
+  const naviForgot = () => {
+    navigate('/forgotpassword');
+  }
   // const handleSubmit = async () => {
   //   e.preventDefault();
 
@@ -128,7 +131,7 @@ function SignIn() {
           <h2 className=' font-bold text-[65px] '>ĐĂNG NHẬP</h2>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type="text"
               value={email}
@@ -139,7 +142,7 @@ function SignIn() {
           </div>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type={showPassword ? "text" : "password"}
               value={password}
@@ -152,7 +155,7 @@ function SignIn() {
           <button className='w-[450px] h-[75px] bg-[rgba(71,225,112,0.8)] rounded-[30px] font-baloo font-bold text-[32px]  ' onClick={handleSubmit} >Đăng nhập</button>
           <div className='flex justify-between w-[450px]'>
             <div className='font-baloo font-bold text-[20px] ' onClick={naviSignUp}>Tạo tài khoản</div>
-            <div className='font-baloo font-bold text-[20px] '>Quên mật khẩu ?</div>
+            <div className='font-baloo font-bold text-[20px] ' onClick={naviForgot}>Quên mật khẩu ?</div>
           </div>
         </div>
       </div>

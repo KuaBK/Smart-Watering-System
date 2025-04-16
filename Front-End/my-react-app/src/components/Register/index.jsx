@@ -95,29 +95,29 @@ function Register() {
           <h2 className='font-baloo font-bold text-[65px] '>ĐĂNG KÝ</h2>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
-            <span className={`absolute left-[10px] top-[15px] text-black transition-all ${email ? "top-0 text-sm font-semibold text-black peer-valid:top-0 peer-valid:text-sm peer-valid:font-semibold peer-valid:text-black" : "peer-placeholder-shown:top-[15px] peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:font-semibold peer-focus:text-black"}`}>Họ và Tên</span>
+            <span className={`absolute left-[10px] top-[15px] text-black transition-all ${name ? "top-0 text-sm font-semibold text-black peer-valid:top-0 peer-valid:text-sm peer-valid:font-semibold peer-valid:text-black" : "peer-placeholder-shown:top-[15px] peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:font-semibold peer-focus:text-black"}`}>Họ và Tên</span>
             <img src={user} alt="" />
           </div>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
-            <span className={`absolute left-[10px] top-[15px] text-black transition-all ${email ? "top-0 text-sm font-semibold text-black peer-valid:top-0 peer-valid:text-sm peer-valid:font-semibold peer-valid:text-black" : "peer-placeholder-shown:top-[15px] peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:font-semibold peer-focus:text-black"}`}>Số điện thoại</span>
+            <span className={`absolute left-[10px] top-[15px] text-black transition-all ${phone ? "top-0 text-sm font-semibold text-black peer-valid:top-0 peer-valid:text-sm peer-valid:font-semibold peer-valid:text-black" : "peer-placeholder-shown:top-[15px] peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:font-semibold peer-focus:text-black"}`}>Số điện thoại</span>
             <img src={phoneicon} alt="" />
           </div>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type="text"
               value={email}
@@ -128,7 +128,7 @@ function Register() {
           </div>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type={showPassword ? "text" : "password"}
               value={password}
@@ -139,7 +139,7 @@ function Register() {
           </div>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent  outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent  outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type={showConfirmPW ? "text" : "password"}
               value={confirmPW}

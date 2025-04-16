@@ -12,6 +12,8 @@ import Statistic from './components/Statistic';
 import PageIntro from './page/PageIntro';
 import AirHumidity from './components/AirHumidity';
 import SoldMoisture from './components/SoldMoisture';
+import ChangePW from './components/ChangePW';
+import ForgotPW from './components/ForgotPW';
 
 function App() {
   return (
@@ -20,6 +22,8 @@ function App() {
         <Route path="/" element={<Wellcome />} />
         <Route path="/register" element={<Register />} />
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/changepassword" element={<ChangePW />} />
+        <Route path="/forgotpassword" element={<ForgotPW />} />
         <Route path="/home" element={<PageIntro />} />
 
         <Route path="/user" element={<LayoutDefault />} >

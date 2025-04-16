@@ -7,7 +7,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
 import axios from "axios";
-function Register() {
+import {decodeToken} from '../../Utils/decodeToken'
+function ChangePW() {
     const navigate = useNavigate();
     const [confirmPW, setConfirmPW] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -44,15 +45,28 @@ function Register() {
         const data = {
             oldPassword: oldPassword,
             newPassword: newPassword,
-            laconfirmPasswordstName: confirmPW,
+            confirmPassword: confirmPW,
         };
         console.log(data);
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            navigate('/signin');
+          }
+        const userInfo = decodeToken(token);
+        console.log('Thông tin trong JWT:', userInfo);
+        
+        
         try {
-            const response = await axios.post("http://localhost:8080/account/create",
-                data
+            const response = await axios.put(`http://localhost:8080/account/${userInfo.accountId}`,
+                data,{
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                }
             );
             console.log(response);
-            if (response.status === 201) {
+            if (response.status === 200) {
                 // setCVProfile(response.data.data)
                 Swal.fire({
                     title: "Thành công!",
@@ -78,14 +92,14 @@ function Register() {
             <div className="h-[620px] w-[1000px] relative bg-[rgba(245,245,245,0.5)] rounded-[50px] border border-black">
                 <img className="h-[780px] w-[530px] bouder-[50px] absolute right-[-100px] top-[-70px] animate-slideOut z-10" src={imgPlant} alt="Plant" />
                 <div className='float-left flex flex-col justify-around items-center h-full px-[50px] py-[30px] animate-slideIndiv'>
-                    <h2 className='font-baloo font-bold text-[65px] '>ĐĂNG KÝ</h2>
+                    <h4 className=' font-bold text-[40px] '>Thay đổi mật khẩu</h4>
                     {/* <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
                         <span className={`absolute left-[10px] top-[15px] text-black transition-all ${oldPassword ? "top-0 text-sm font-semibold text-black peer-valid:top-0 peer-valid:text-sm peer-valid:font-semibold peer-valid:text-black" : "peer-placeholder-shown:top-[15px] peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:font-semibold peer-focus:text-black"}`}>Mật khẩu hiện tại</span>
                         <img src={phoneicon} alt="" />
                     </div> */}
                     <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
                         <input
-                            className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+                            className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
                             placeholder=""
                             type="text"
                             value={oldPassword}
@@ -96,7 +110,7 @@ function Register() {
                     </div>
                     <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
                         <input
-                            className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+                            className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
                             placeholder=""
                             type={showPassword ? "text" : "password"}
                             value={newPassword}
@@ -107,7 +121,7 @@ function Register() {
                     </div>
                     <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
                         <input
-                            className="peer flex-1 bg-transparent  outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+                            className="peer flex-1 bg-transparent  outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
                             placeholder=""
                             type={showConfirmPW ? "text" : "password"}
                             value={confirmPW}
@@ -127,4 +141,4 @@ function Register() {
 
 
 }
-export default Register;
+export default ChangePW;
