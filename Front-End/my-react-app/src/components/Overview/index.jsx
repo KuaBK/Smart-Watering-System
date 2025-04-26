@@ -36,7 +36,7 @@ const CircularProgress = ({ percentage, label, color }) => {
 
 const Overview = ({ data }) => {
     const {
-        temperature = 24, // Default nếu chưa có data
+        temperature = 24,
         soilMoisture = 80,
         airHumidity = 70,
         lightIntensity = 30
@@ -54,15 +54,10 @@ const Overview = ({ data }) => {
             <h1 className="text-3xl font-bold text-left mb-4">Khu vườn 1</h1>
 
             <div className="flex flex-col md:flex-row gap-10">
-                {/* Left */}
                 <div className="flex-1 flex flex-col items-center">
-                    {/* Temperature bar */}
                     <div className="w-full max-w-[750px] mb-12">
                         <div className="relative w-full">
-                            {/* Thanh nền */}
                             <div className="h-2 bg-green-200 rounded-full" />
-
-                            {/* Đoạn thuận lợi (20°C - 30°C) */}
                             <div
                                 className="absolute top-0 h-2 bg-green-600 rounded-full"
                                 style={{
@@ -70,8 +65,6 @@ const Overview = ({ data }) => {
                                     width: `${getPercent(optimalEnd) - getPercent(optimalStart)}%`
                                 }}
                             />
-
-                            {/* Mũi tên nhiệt độ hiện tại */}
                             <div
                                 className="absolute top-0 transform -translate-x-1/2"
                                 style={{ left: `${getPercent(temperature)}%` }}
@@ -81,8 +74,6 @@ const Overview = ({ data }) => {
                                     {temperature}°C
                                 </div>
                             </div>
-
-                            {/* Các mốc số: đặt theo phần trăm */}
                             <div className="absolute top-full left-0 w-full mt-2 text-sm font-semibold">
                                 <div className="relative w-full">
                                     <span className="absolute left-0 -translate-x-1/2">0</span>
@@ -116,8 +107,6 @@ const Overview = ({ data }) => {
                         </button>
                     </div>
                 </div>
-
-                {/* Right */}
                 <div className="flex flex-col gap-8 w-full md:w-1/3">
                     <div>
                         <h2 className="text-center text-xl font-bold mb-2">Khoảng thuận lợi</h2>

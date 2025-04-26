@@ -3,23 +3,25 @@ import mailsvg from '../../assets/mail.svg';
 import locksvg from '../../assets/lock.svg';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from "react-toastify";
+// import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 // import { em, text } from 'framer-motion/client';
-const account =
-  [
-    {
-      "id": 1,
-      email: "Duong@gmail.com",
-      password: "123456"
-    },
-    {
-      "id": 2,
-      email: "abc@gmail.com",
-      password: "123456"
-    }
-  ];
+
+// const account =
+//   [
+//     {
+//       "id": 1,
+//       email: "Duong@gmail.com",
+//       password: "123456"
+//     },
+//     {
+//       "id": 2,
+//       email: "abc@gmail.com",
+//       password: "123456"
+//     }
+//   ];
 function SignIn() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
@@ -28,8 +30,12 @@ function SignIn() {
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   }
+
   const naviSignUp = () => {
     navigate('/register');
+  }
+  const naviForgot = () => {
+    navigate('/forgotpassword');
   }
   // const handleSubmit = async () => {
   //   e.preventDefault();
@@ -68,16 +74,54 @@ function SignIn() {
   //     });
   //   }
   // }
-  const handleSubmit = () => {
-    console.log("abcc");
-    const check = account.find((acc) => acc.email === email && acc.password === password);
-    if (check) {
-      navigate('/user');
+  // useEffect(() => {
+  //   const fetchLogin = async () => {
+
+  //     try {
+  //       const response = await axios.post("http://localhost:8080/auth/login"
+  //       );
+  //       if (response.statusText === "OK") {
+  //         // setCVProfile(response.data.data)
+  //         naviSignUp();
+  //       }
+  //     } catch (error) {
+  //       Swal.fire({
+  //         icon: "error",
+  //         title: `Lỗi ${error}`,
+  //         text: "Đăng nhập thất bại.",
+  //       });
+  //     }
+  //   };
+  //   fetchLogin();
+  // },[]);
+  const handleSubmit = async () => {
+    var form = {
+      email: email,
+      password: password
     }
-    else {
+    console.log(form);
+    try {
+      const response = await axios.post("http://localhost:8080/auth/login",
+        form
+      );
+      console.log(response);
+      if (response.status === 200) {
+        // setCVProfile(response.data.data)
+        localStorage.setItem("jwtToken", response.data.result.token);
+        navigate('/user');
+      } else {
+        Swal.fire({
+          title: "Thất bại!",
+          text: `Tài khoản mật khẩu chưa đúng.`,
+          showConfirmButton: false,
+          icon: "warning",
+          timer: 3000
+        });
+      }
+    } catch {
       Swal.fire({
         title: "Thất bại!",
-        text: "Tài khoản hoặc mật khẩu chưa đúng vui lòng thử lại.",
+        text: `Đã xảy ra lỗi, vui lòng thử lại.`,
         showConfirmButton: false,
         icon: "warning",
         timer: 3000
@@ -97,10 +141,10 @@ function SignIn() {
         /> */}
         <img className="h-[780px] w-[530px] bouder-[50px] absolute left-[-100px] top-[-70px] animate-slideIn z-10" src={imgPlant} alt="Plant" />
         <div className='float-right flex flex-col justify-around items-center h-full px-[50px] py-[50px] animate-slideOutdiv'>
-          <h2 className='font-baloo font-bold text-[65px] '>LOGIN</h2>
+          <h2 className=' font-bold text-[65px] '>ĐĂNG NHẬP</h2>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type="text"
               value={email}
@@ -111,20 +155,20 @@ function SignIn() {
           </div>
           <div className='flex flex-row justify-around border-b-2 border-black w-[450px] h-[50px] relative'>
             <input
-              className="peer flex-1 bg-transparent !bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px] pb-[5px]"
+              className="peer flex-1 bg-transparent outline-none placeholder-black placeholder:font-bold font-bold px-[10px] pt-[10px]"
               placeholder=""
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
-            <span className={`absolute left-[10px] top-[15px] text-black transition-all ${password ? "top-0 text-sm font-semibold text-black peer-valid:top-0 peer-valid:text-sm peer-valid:font-semibold peer-valid:text-black" : "peer-placeholder-shown:top-[15px] peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:font-semibold peer-focus:text-black"}`}>Password</span>
+            <span className={`absolute left-[10px] top-[15px] text-black transition-all ${password ? "top-0 text-sm font-semibold text-black peer-valid:top-0 peer-valid:text-sm peer-valid:font-semibold peer-valid:text-black" : "peer-placeholder-shown:top-[15px] peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:font-semibold peer-focus:text-black"}`}>Mật khẩu</span>
             <img onClick={handleShowPassword} src={locksvg} alt="" />
           </div>
           {/* <ToastContainer /> */}
-          <button className='w-[450px] h-[75px] bg-[rgba(71,225,112,0.8)] rounded-[30px] font-baloo font-bold text-[32px]  ' onClick={handleSubmit} >Login</button>
+          <button className='w-[450px] h-[75px] bg-[rgba(71,225,112,0.8)] rounded-[30px] font-baloo font-bold text-[32px]  ' onClick={handleSubmit} >Đăng nhập</button>
           <div className='flex justify-between w-[450px]'>
-            <div className='font-baloo font-bold text-[20px] ' onClick={naviSignUp}>Create an account</div>
-            <div className='font-baloo font-bold text-[20px] '>Forget password ?</div>
+            <div className='font-baloo font-bold text-[20px] ' onClick={naviSignUp}>Tạo tài khoản</div>
+            <div className='font-baloo font-bold text-[20px] ' onClick={naviForgot}>Quên mật khẩu ?</div>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import home from '../../assets/home.svg'
-import thermometer from '../../assets/thermometer.svg'
+// import thermometer from '../../assets/thermometer.svg'
 import droplet from '../../assets/droplet.svg'
 import sun from '../../assets/sun.svg'
 import pieChart from '../../assets/pie-chart.svg'

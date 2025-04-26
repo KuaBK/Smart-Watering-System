@@ -34,17 +34,13 @@ const humidityLightData = [
 const Statistic = () => {
     return (
         <div className="flex flex-col md:flex-row gap-6 p-6 rounded-xl w-full min-w-[900px] max-w-[1400px] mx-auto">
-            {/* Biểu đồ nhiệt độ */}
             <div className="flex-1 bg-green-50 rounded-xl p-4 shadow-md relative">
-                {/* Tiêu đề */}
                 <div className="mb-4 flex items-center justify-center relative">
                     <h2 className="text-lg font-bold text-green-700 text-center">
                         NHIỆT ĐỘ (°C)
                     </h2>
                     <span className="absolute right-0 text-sm text-green-400">2025</span>
                 </div>
-
-                {/* Biểu đồ */}
                 <ResponsiveContainer width="100%" height={600}>
                     <LineChart data={temperatureData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#c6f6d5" />
@@ -61,18 +57,13 @@ const Statistic = () => {
                     </LineChart>
                 </ResponsiveContainer>
             </div>
-
-            {/* Biểu đồ độ ẩm & ánh sáng */}
             <div className="flex-1 bg-green-50 rounded-xl p-4 shadow-md relative">
-                {/* Tiêu đề */}
                 <div className="mb-4 flex items-center justify-center relative">
                     <h2 className="text-lg font-bold text-green-700 text-center">
                         ĐỘ ẨM KHÔNG KHÍ, ĐẤT, CƯỜNG ĐỘ ÁNH SÁNG
                     </h2>
                     <span className="absolute right-0 text-sm text-green-400">2025</span>
                 </div>
-
-                {/* Biểu đồ */}
                 <ResponsiveContainer width="100%" height={600}>
                     <BarChart
                         data={humidityLightData}
