@@ -11,6 +11,7 @@ import Temperature from './components/Temperature';
 import Humidity from './components/Humidity';
 import Light from './components/Light';
 import Statistic from './components/Statistic';
+import Help from './components/Help/help';
 
 function App() {
   return (
@@ -26,8 +27,9 @@ function App() {
           <Route path="humidity" element={<Humidity />} />
           <Route path="light" element={<Light />} />
           <Route path="statistic" element={<Statistic />} />
+          <Route path="help" element={<Help />} />
         </Route>
-        
+
       </Routes>
     </Router>
   );

@@ -7,18 +7,18 @@ import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
 
 // import { em, text } from 'framer-motion/client';
-const account = 
+const account =
   [
-  {
-    "id": 1,
-    email: "Duong@gmail.com",
-    password: "123456"
-  },
-  {
-    "id": 2,
-    email: "abc@gmail.com",
-    password: "123456"
-  }
+    {
+      "id": 1,
+      email: "Duong@gmail.com",
+      password: "123456"
+    },
+    {
+      "id": 2,
+      email: "abc@gmail.com",
+      password: "123456"
+    }
   ];
 function SignIn() {
   const navigate = useNavigate();
@@ -42,17 +42,17 @@ function SignIn() {
 
 
   //   try {
-      // const response = await api.post('/auth/public/signin', data);
-      // const decodedToken = jwtDecode(response.data.jwtToken);
-      // if (response.status === 200 && response.data.jwtToken) {
-      //   setJwtToken(response.data.jwtToken);
-      //   handleSuccessfulLogin(response.data.jwtToken, decodedToken);
-      // } else {
-      //   toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.", {
-      //     position: "top-right",
-      //     autoClose: 3000,
-      //   });
-      // }
+  // const response = await api.post('/auth/public/signin', data);
+  // const decodedToken = jwtDecode(response.data.jwtToken);
+  // if (response.status === 200 && response.data.jwtToken) {
+  //   setJwtToken(response.data.jwtToken);
+  //   handleSuccessfulLogin(response.data.jwtToken, decodedToken);
+  // } else {
+  //   toast.error("Đã xảy ra lỗi! Vui lòng thử lại sau.", {
+  //     position: "top-right",
+  //     autoClose: 3000,
+  //   });
+  // }
 
   //   }
   //   catch(error){
