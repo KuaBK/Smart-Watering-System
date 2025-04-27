@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 // import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { decodeToken } from '../../Utils/decodeToken';
 
 // import { em, text } from 'framer-motion/client';
 
@@ -88,14 +89,20 @@ function SignIn() {
     }
     console.log(form);
     try {
-      const response = await axios.post("http://localhost:8080/auth/login",
+      const response = await axios.post(`${API_BE}/auth/login`,
         form
       );
       console.log(response);
       if (response.status === 200) {
         // setCVProfile(response.data.data)
         localStorage.setItem("jwtToken", response.data.result.token);
-        navigate('/user');
+        var role =decodeToken(response.data.result.token).scope;
+        localStorage.setItem("ROLE",role);
+        if (role === "ROLE_FARMER"){
+          navigate('/home');
+        }else{
+          navigate('/admin');
+        }
       }else {
         Swal.fire({
           title: "Thất bại!",

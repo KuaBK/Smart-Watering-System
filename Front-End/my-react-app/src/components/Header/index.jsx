@@ -32,6 +32,11 @@ const Header = () => {
     const handleChangePW = () => {
         navigate('/changepassword');
     }
+    const handleChangeGarden = () => {
+        localStorage.removeItem("garden");
+        navigate('/home');
+    }
+    const role = localStorage.getItem("ROLE");
     return (
         <div className="h-[96px] w-full bg-[rgba(44,135,108,1)] flex justify-between items-center px-[20px] shadow-[0px_5px_4px_0px_rgba(0,0,0,0.25)] ">
             <div className='flex gap-[20px] ml-[20px]'>
@@ -46,12 +51,25 @@ const Header = () => {
                     {/* <img className='brightness-100 sepia saturate-[500%] hue-rotate-[10deg] contrast-[120%] opacity-80' src={user} alt="" /> */}
                     <img ref={avtRef} className='transition-all duration-300' src={isOpen ? userActive : usercurrent} alt="" onClick={handle} />
                     {isOpen && (
-                        <div ref={divRef} className='h-fit absolute top-full right-[50%] w-fit bg-white border-[2px] border-[rgba(70,223,177,0.8)] rounded-b-[15px] rounded-tl-[15px]'>
+                        
+                            (role === "ROLE_FARMER") ? (
+                            <div ref={divRef} className='h-fit absolute top-full right-[50%] w-fit bg-white border-[2px] border-[rgba(70,223,177,0.8)] rounded-b-[15px] rounded-tl-[15px]'>
 
-                            <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  rounded-tl-[10px]' onClick={handleLogout}>Đăng xuất</div>
-                            <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  rounded-b-[10px]' onClick={handleChangePW}>Thay đổi mật khẩu</div>
+                                <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  rounded-tl-[10px]' onClick={handleChangePW}>Thay đổi mật khẩu</div>
+                                <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  ' onClick={handleChangeGarden}>Thay đổi khu vườn</div>
+                                <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  rounded-b-[10px]' onClick={handleLogout}>Đăng xuất</div>
 
-                        </div>
+                            </div>
+                        ) : (
+                            <div ref={divRef} className='h-fit absolute top-full right-[50%] w-fit bg-white border-[2px] border-[rgba(70,223,177,0.8)] rounded-b-[15px] rounded-tl-[15px]'>
+
+                                {/* <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  rounded-tl-[10px]' onClick={handleChangePW}>Thay đổi mật khẩu</div> */}
+                                {/* <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  ' onClick={handleChangeGarden}>Thay đổi khu vườn</div> */}
+                                <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  rounded-b-[10px] rounded-tl-[10px]' onClick={handleLogout}>Đăng xuất</div>
+
+                            </div>
+                        )
+                        
                     )}
                 </div>
             </div>

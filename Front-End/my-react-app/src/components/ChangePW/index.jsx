@@ -57,7 +57,7 @@ function ChangePW() {
         
         
         try {
-            const response = await axios.put(`http://localhost:8080/account/${userInfo.accountId}`,
+            const response = await axios.put(`${API_BE}/account/${userInfo.accountId}`,
                 data,{
                     headers: {
                         Authorization: `Bearer ${token}`,

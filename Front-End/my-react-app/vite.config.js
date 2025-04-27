@@ -8,4 +8,8 @@ export default defineConfig({
     react(),
     // tailwindcss(),
   ],
+  define: {
+    API_CE: JSON.stringify('http://localhost:8080'),
+    API_BE: JSON.stringify('http://localhost:8081'),
+  },
 })

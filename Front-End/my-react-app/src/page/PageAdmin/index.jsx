@@ -1,58 +1,16 @@
-import { useState } from "react";
+import { Outlet } from "react-router-dom";
+import Sidebar from "../../components/Sidebar";
+import Header from "../../components/Header";
 
-const datatemp = [
-    {
-      name: "Vườn Hoa Lan",
-      address: "123 Đường Hoa, TP.HCM",
-      createdAt: "2024-01-01",
-      owner: "Nguyễn Văn A",
-    },
-    {
-      name: "Vườn Cây Cảnh",
-      address: "456 Đường Cây, Hà Nội",
-      createdAt: "2024-03-15",
-      owner: "Trần Thị B",
-    },
-    {
-      name: "Vườn Rau Sạch",
-      address: "789 Đường Rau, Đà Nẵng",
-      createdAt: "2024-04-10",
-      owner: "Lê Văn C",
-    },
-  ];
 const PageAdmin = () => {
-
-    const [data,setData] = useState(datatemp);
-    const handleDelete = (index) => {
-        alert(`Bạn muốn xóa hàng số ${index + 1}`);
-      };
     return (
-        <div>
-            <table border="1">
-      <thead>
-        <tr>
-          <th>Tên</th>
-          <th>Địa chỉ</th>
-          <th>Ngày tạo</th>
-          <th>Chủ Vườn</th>
-          <th>Xóa</th>
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((garden, index) => (
-          <tr key={index}>
-            <td>{garden.name}</td>
-            <td>{garden.address}</td>
-            <td>{garden.createdAt}</td>
-            <td>{garden.owner}</td>
-            <td>
-              <button onClick={() => handleDelete(index)}>Xóa</button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+        <div className="flex flex-col h-screen w-full max-h-[100vh] max-w-[100vw]">
+            <Header />
+            <div className="flex flex-row flex-1 max-w-[100%] max-h-[calc(100vh-91px)] overflow-y-auto ">
+                <Sidebar />
+                <Outlet />
+            </div>
         </div>
     );
-};
- export default PageAdmin;   
+}
+export default PageAdmin;

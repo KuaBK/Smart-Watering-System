@@ -62,7 +62,7 @@ function Register() {
     };
     console.log(data);
     try {
-      const response = await axios.post("http://localhost:8080/account/create",
+      const response = await axios.post(`${API_BE}/account/create`,
         data
       );
       console.log(response);

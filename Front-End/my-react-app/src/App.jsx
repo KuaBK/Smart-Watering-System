@@ -14,6 +14,14 @@ import AirHumidity from './components/AirHumidity';
 import SoldMoisture from './components/SoldMoisture';
 import ChangePW from './components/ChangePW';
 import ForgotPW from './components/ForgotPW';
+import PageAdmin from './page/PageAdmin';
+import ManaGarden from './components/ManaGarden';
+import ManaUser from './components/ManaUser';
+import FarmDetail from './components/FarmDetail';
+import Garden from './page/Garden';
+import User from './page/User';
+import AddGarden from './components/AddGarden';
+import UserDetail from './components/UserDetail';
 
 function App() {
   return (
@@ -30,11 +38,28 @@ function App() {
           <Route index element={<Navigate to="/user/statistic" replace />} />
           <Route path="overview" element={<Overview />} />
           <Route path="soldMoisture" element={<SoldMoisture />} />
-          <Route path="airHumidity" element={<AirHumidity />} />
+          {/* <Route path="airHumidity" element={<AirHumidity />} /> */}
           <Route path="light" element={<Light />} />
           <Route path="statistic" element={<Statistic />} />
         </Route>
-        
+
+        <Route path="/admin" element={<PageAdmin />} >
+          <Route index element={<Navigate to="/admin/garden" replace />} />
+
+          <Route path="garden" element={<Garden />} >
+            <Route index element={<Navigate to="/admin/garden/overview" replace />} />
+            <Route path="overview" element={<ManaGarden />} />
+            <Route path="farmdetail/:idGarden" element={<FarmDetail />} />
+            <Route path="addFarm" element={<AddGarden />} />
+          </Route>
+          <Route path="user" element={<User />} >
+            <Route index element={<Navigate to="/admin/user/overview" replace />} />
+            <Route path="overview" element={<ManaUser />} />
+            <Route path="userdetail/:iduser" element={<UserDetail />} />
+          </Route>
+        </Route>
+
+
       </Routes>
     </Router>
   );

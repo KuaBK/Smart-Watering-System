@@ -12,7 +12,7 @@ const ProgressChart = ({value,min,max}) => {
           data: [value, 100-value], // Phần chính và phần còn lại
           backgroundColor: [value > min && value < max ? '#167b47' : 'rgba(229,0,0,1)', '#6ee7b7'], // Màu phần chính + nền
           borderWidth: 0, // Loại bỏ đường viền để mượt hơn
-          borderRadius: [20, -20], // Bo góc chỉ cho phần chính
+          // borderRadius: [20, -20], // Bo góc chỉ cho phần chính
           cutout: '80%', // Làm Doughnut
         },
       ],

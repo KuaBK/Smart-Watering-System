@@ -39,7 +39,7 @@ function ForgotPW() {
 
 
         try {
-            const response = await axios.post(`http://localhost:8080/account/forgot-password?email=${email}`);
+            const response = await axios.post(`${API_BE}/account/forgot-password?email=${email}`);
             console.log(response);
             if (response.status === 200) {
                 // setCVProfile(response.data.data)
@@ -75,7 +75,7 @@ function ForgotPW() {
 
 
         try {
-            const response = await axios.post(`http://localhost:8080/account/confirm-otp?email=${email}&otp=${otp}`);
+            const response = await axios.post(`${API_BE}/account/confirm-otp?email=${email}&otp=${otp}`);
             console.log(response);
             if (response.status === 200) {
                 // setCVProfile(response.data.data)
@@ -126,7 +126,7 @@ function ForgotPW() {
 
 
         try {
-            const response = await axios.post(`http://localhost:8080/account/reset-password`,data,{
+            const response = await axios.post(`${API_BE}/account/reset-password`,data,{
                 headers: {
                     'Content-Type': 'application/json',
                 },
