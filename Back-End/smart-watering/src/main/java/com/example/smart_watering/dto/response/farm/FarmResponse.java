@@ -13,9 +13,10 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FarmResponse {
     private Long id;
+    private String code;
     private String name;
     private String location;
     private LocalDate createdAt;
-    private String ownerEmail;
-    private List<String> employeeEmails;
+    private String ownerFarmName;
+    private List<String> employeeNames;
 }

@@ -21,10 +21,13 @@ public class Farm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    String code;
+
     String name;
     String location;
 
     private LocalDate createdAt;
+
     String picture;
 
     @ManyToOne

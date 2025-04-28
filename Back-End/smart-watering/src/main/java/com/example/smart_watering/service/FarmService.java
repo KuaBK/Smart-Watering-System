@@ -69,6 +69,7 @@ public class FarmService {
         farm.setName(dto.getName());
         farm.setLocation(dto.getLocation());
         farm.setCreatedAt(dto.getCreatedAt());
+        farm.setCode("Farm-" + (farmRepository.count() + 1));
 
         Account owner = accountRepository.findById(dto.getOwnerId())
                 .orElseThrow(() -> new RuntimeException("Owner not found"));
@@ -170,12 +171,13 @@ public class FarmService {
     private FarmResponse toResponseDto(Farm farm) {
         return FarmResponse.builder()
                 .id(farm.getId())
+                .code(farm.getCode())
                 .name(farm.getName())
                 .location(farm.getLocation())
                 .createdAt(farm.getCreatedAt())
-                .ownerEmail(farm.getOwner().getEmail())
-                .employeeEmails(farm.getEmployees().stream()
-                        .map(Account::getEmail)
+                .ownerFarmName(farm.getOwner().getFirstName() + " " + farm.getOwner().getLastName())
+                .employeeNames(farm.getEmployees().stream()
+                        .map(account -> account.getFirstName() + " " + account.getLastName())
                         .toList())
                 .build();
     }
