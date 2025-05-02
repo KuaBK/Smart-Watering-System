@@ -1,5 +1,7 @@
 package com.example.smart_watering.dto.response.farm;
 
+import com.example.smart_watering.entity.FarmEmployee;
+import com.example.smart_watering.entity.account.Account;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -23,10 +25,12 @@ public class FarmResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate createdAt;
 
-    private String ownerFarmName;
+    private String ownerName;
+    private String ownerPhoneNumber;
+    private String ownerAddress;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss dd-MM-yyyy")
     LocalDateTime startDate;
 
-    private List<String> employeeNames;
+    private List<FarmEmployee> employee;
 }

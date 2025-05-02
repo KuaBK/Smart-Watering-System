@@ -9,7 +9,9 @@ import com.example.smart_watering.dto.request.account.PasswordUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
 import com.example.smart_watering.dto.response.account.ResetPasswordResponse;
+import com.example.smart_watering.dto.response.farm.FarmEmployeeResponse;
 import com.example.smart_watering.entity.Farm;
+import com.example.smart_watering.entity.FarmEmployee;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.repository.AccountRepository;
 import com.example.smart_watering.service.AccountService;
@@ -60,14 +62,14 @@ public class AccountController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/employee/{accountId}")
-    public ApiResponse<List<Farm>> getFarmsAsEmployee(@PathVariable String accountId) {
-        return new ApiResponse<>(200, "Get list farm as employee",accountService.getFarmsAsEmployee(accountId));
+    @GetMapping("/owner/{accountId}")
+    public List<Farm> getFarmsOwnedByAccount(@PathVariable String accountId) {
+        return accountService.getFarmsOwnedByAccount(accountId);
     }
 
-    @GetMapping("/owner/{accountId}")
-    public ApiResponse<List<Farm>> getFarmsAsOwner(@PathVariable String accountId) {
-        return new ApiResponse<>(200, "Get list farm as owner", accountService.getFarmsAsOwner(accountId));
+    @GetMapping("/employee/{accountId}")
+    public List<FarmEmployeeResponse> getFarmEmployeeList(@PathVariable String accountId) {
+        return accountService.getFarmsWorkingForAccount(accountId);
     }
 
     // Get Account by ID

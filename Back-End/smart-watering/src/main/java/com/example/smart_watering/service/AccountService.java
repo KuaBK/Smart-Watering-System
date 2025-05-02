@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 
 import com.cloudinary.Cloudinary;
@@ -16,13 +17,16 @@ import com.example.smart_watering.dto.request.account.PasswordUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
 import com.example.smart_watering.dto.response.account.ResetPasswordResponse;
+import com.example.smart_watering.dto.response.farm.FarmEmployeeResponse;
 import com.example.smart_watering.entity.Farm;
+import com.example.smart_watering.entity.FarmEmployee;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.entity.account.PasswordResetToken;
 import com.example.smart_watering.entity.account.Role;
 import com.example.smart_watering.exception.AppException;
 import com.example.smart_watering.exception.ErrorCode;
 import com.example.smart_watering.repository.AccountRepository;
+import com.example.smart_watering.repository.FarmEmployeeRepository;
 import com.example.smart_watering.repository.FarmRepository;
 import com.example.smart_watering.repository.PasswordResetTokenRepository;
 import jakarta.transaction.Transactional;
@@ -45,6 +49,7 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenRepository tokenRepository;
+    final FarmEmployeeRepository farmEmployeeRepository;
     private final JavaMailSender mailSender;
     private final FarmRepository farmRepository;
     private final Cloudinary cloudinary;
@@ -138,16 +143,34 @@ public class AccountService {
         return false;
     }
 
-    public List<Farm> getFarmsAsEmployee(String accountId) {
+    public List<Farm> getFarmsOwnedByAccount(String accountId) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        return farmRepository.findByEmployeesContains(account);
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+        return farmRepository.findByOwner(account);
     }
 
-    public List<Farm> getFarmsAsOwner(String accountId) {
+    public List<FarmEmployeeResponse> getFarmsWorkingForAccount(String accountId) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        return farmRepository.findByOwner(account);
+                .orElseThrow(() -> new AppException(ErrorCode.ACCOUNT_NOT_FOUND));
+
+        return farmEmployeeRepository.findByEmployee(account)
+                .stream()
+                .map(farmEmployee -> {
+                    Farm farm = farmEmployee.getFarm();
+                    Account owner = farm.getOwner();
+
+                    String ownerName = null;
+                    if (owner != null) {
+                        ownerName = owner.getFirstName() + " " + owner.getLastName();
+                    }
+
+                    return FarmEmployeeResponse.builder()
+                            .farmName(farm.getName())
+                            .ownerName(ownerName)
+                            .startWorkingDate(farmEmployee.getStartWorkingDate())
+                            .build();
+                })
+                .toList();
     }
 
     private AccountResponse mapToAccountResponse(Account account) {

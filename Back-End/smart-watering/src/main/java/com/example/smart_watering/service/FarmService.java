@@ -5,10 +5,12 @@ import com.cloudinary.utils.ObjectUtils;
 import com.example.smart_watering.dto.request.farm.FarmRequest;
 import com.example.smart_watering.dto.response.farm.FarmResponse;
 import com.example.smart_watering.entity.Farm;
+import com.example.smart_watering.entity.FarmEmployee;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.exception.AppException;
 import com.example.smart_watering.exception.ErrorCode;
 import com.example.smart_watering.repository.AccountRepository;
+import com.example.smart_watering.repository.FarmEmployeeRepository;
 import com.example.smart_watering.repository.FarmRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +37,7 @@ import java.util.Map;
 public class FarmService {
     private final FarmRepository farmRepository;
     private final AccountRepository accountRepository;
+    final FarmEmployeeRepository farmEmployeeRepository;
     final Cloudinary cloudinary;
     private final JavaMailSender mailSender;
 
@@ -81,13 +85,25 @@ public class FarmService {
         }
         farm.setOwner(owner);
 
+        farm = farmRepository.save(farm);
+        final Farm savedFarm = farm;
 
-        List<Account> employees = accountRepository.findAllById(dto.getEmployeeIds());
-        farm.setEmployees(employees);
+        List<FarmEmployee> employeeLinks = accountRepository.findAllById(dto.getEmployeeIds()).stream()
+                .map(account -> FarmEmployee.builder()
+                        .farm(savedFarm)
+                        .employee(account)
+                        .employeeName(account.getFirstName() + " " + account.getLastName())
+                        .startWorkingDate(LocalDate.now())
+                        .build())
+                .toList();
 
-        farmRepository.save(farm);
+        farmEmployeeRepository.saveAll(employeeLinks);
+
+        farm.setEmployees(employeeLinks);
+
         return toResponseDto(farm);
     }
+
 
     public boolean delete(Long id) {
         Farm farm = farmRepository.findById(id).orElseThrow(() -> new RuntimeException("Farm not found"));
@@ -111,39 +127,37 @@ public class FarmService {
 
     public void addEmployeeToFarm(Long farmId, String employeeId) {
         Farm farm = farmRepository.findById(farmId)
-                .orElseThrow(() -> new AppException(ErrorCode.FARM_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException("Farm not found"));
 
         Account employee = accountRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
-        if (!farm.getEmployees().contains(employee)) {
-            farm.getEmployees().add(employee);
-            farmRepository.save(farm);
+        if (farmEmployeeRepository.findByFarmAndEmployee(farm, employee).isPresent()) {
+            throw new RuntimeException("Employee already in farm");
         }
 
-        try {
-            sendGardenNotificationEmail(employee.getEmail(), farm.getName(), true);
-        } catch (MessagingException e) {
-            log.error("Failed to send email: " + e.getMessage());
-        }
+        FarmEmployee fe = FarmEmployee.builder()
+                .farm(farm)
+                .employee(employee)
+                .employeeName(employee.getFirstName() + " " + employee.getLastName())
+                .startWorkingDate(LocalDate.now())
+                .build();
+
+        farmEmployeeRepository.save(fe);
     }
+
 
     public void removeEmployeeFromFarm(Long farmId, String employeeId) {
         Farm farm = farmRepository.findById(farmId)
-                .orElseThrow(() -> new AppException(ErrorCode.FARM_NOT_FOUND));
+                .orElseThrow(() -> new RuntimeException("Farm not found"));
 
         Account employee = accountRepository.findById(employeeId)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
-        if (farm.getEmployees().contains(employee)) {
-            farm.getEmployees().remove(employee);
-            farmRepository.save(farm);
-        }
-        try {
-            sendGardenNotificationEmail(employee.getEmail(), farm.getName(), false);
-        } catch (MessagingException e) {
-            log.error("Failed to send email: " + e.getMessage());
-        }
+        FarmEmployee fe = farmEmployeeRepository.findByFarmAndEmployee(farm, employee)
+                .orElseThrow(() -> new RuntimeException("Employee not in farm"));
+
+        farmEmployeeRepository.delete(fe);
     }
 
     public void sendEmail(@Email String to, String subject, String text) throws MessagingException {
@@ -171,14 +185,22 @@ public class FarmService {
         Farm farm = farmRepository.findById(farmId)
                 .orElseThrow(() -> new RuntimeException("Farm not found"));
 
-        return accountRepository.findAllNotInFarm(farm.getOwner(), farm.getEmployees());
+        List<Account> existingEmployees = farm.getEmployees().stream()
+                .map(FarmEmployee::getEmployee)
+                .toList();
+
+        return accountRepository.findAllNotInFarm(farm.getOwner(), existingEmployees);
     }
 
 
     private FarmResponse toResponseDto(Farm farm) {
-        String ownerFarmName = null;
+        String ownerName = null;
+        String ownerAddress = null;
+        String ownerPhone = null;
         if (farm.getOwner() != null) {
-            ownerFarmName = farm.getOwner().getFirstName() + " " + farm.getOwner().getLastName();
+            ownerName = farm.getOwner().getFirstName() + " " + farm.getOwner().getLastName();
+            ownerAddress = farm.getOwner().getAddress();
+            ownerPhone = farm.getOwner().getPhoneNumber();
         }
         return FarmResponse.builder()
                 .id(farm.getId())
@@ -186,11 +208,11 @@ public class FarmService {
                 .name(farm.getName())
                 .location(farm.getLocation())
                 .createdAt(farm.getCreatedAt())
+                .ownerName(ownerName)
+                .ownerAddress(ownerAddress)
+                .ownerPhoneNumber(ownerPhone)
                 .startDate(farm.getStartDate())
-                .ownerFarmName(ownerFarmName)
-                .employeeNames(farm.getEmployees().stream()
-                        .map(account -> account.getFirstName() + " " + account.getLastName())
-                        .toList())
+                .employee(farm.getEmployees())
                 .build();
     }
 }

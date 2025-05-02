@@ -1,6 +1,7 @@
 package com.example.smart_watering.entity.account;
 
 import com.example.smart_watering.entity.Farm;
+import com.example.smart_watering.entity.FarmEmployee;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -48,7 +49,6 @@ public class Account {
 
     String address;
 
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "employees")
-    private List<Farm> farms;
+    @OneToMany(mappedBy = "employee")
+    List<FarmEmployee> workingFarms;
 }
