@@ -9,6 +9,7 @@ import com.example.smart_watering.dto.request.account.PasswordUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
 import com.example.smart_watering.dto.response.account.ResetPasswordResponse;
+import com.example.smart_watering.entity.Farm;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.repository.AccountRepository;
 import com.example.smart_watering.service.AccountService;
@@ -16,7 +17,6 @@ import com.example.smart_watering.utils.JwtUtils;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
@@ -58,6 +58,16 @@ public class AccountController {
                 .result(accounts)
                 .build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/employee/{accountId}")
+    public ApiResponse<List<Farm>> getFarmsAsEmployee(@PathVariable String accountId) {
+        return new ApiResponse<>(200, "Get list farm as employee",accountService.getFarmsAsEmployee(accountId));
+    }
+
+    @GetMapping("/owner/{accountId}")
+    public ApiResponse<List<Farm>> getFarmsAsOwner(@PathVariable String accountId) {
+        return new ApiResponse<>(200, "Get list farm as owner", accountService.getFarmsAsOwner(accountId));
     }
 
     // Get Account by ID

@@ -1,9 +1,12 @@
 package com.example.smart_watering.dto.response.farm;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,7 +19,14 @@ public class FarmResponse {
     private String code;
     private String name;
     private String location;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate createdAt;
+
     private String ownerFarmName;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss dd-MM-yyyy")
+    LocalDateTime startDate;
+
     private List<String> employeeNames;
 }

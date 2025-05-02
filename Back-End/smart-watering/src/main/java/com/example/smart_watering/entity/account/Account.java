@@ -1,11 +1,13 @@
 package com.example.smart_watering.entity.account;
 
 import com.example.smart_watering.entity.Farm;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -44,6 +46,9 @@ public class Account {
     @Enumerated(EnumType.STRING)
     Role role;
 
+    String address;
+
+    @JsonManagedReference
     @ManyToMany(mappedBy = "employees")
     private List<Farm> farms;
 }

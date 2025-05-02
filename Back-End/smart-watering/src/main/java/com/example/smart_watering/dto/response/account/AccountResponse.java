@@ -4,6 +4,8 @@ import com.example.smart_watering.entity.account.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +16,7 @@ public class AccountResponse {
     String email;
     String firstName;
     String lastName;
+    String address;
     String phoneNumber;
     String picture;
     Role role;

@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -72,8 +73,14 @@ public class FarmService {
         farm.setCode("Farm-" + (farmRepository.count() + 1));
 
         Account owner = accountRepository.findById(dto.getOwnerId())
-                .orElseThrow(() -> new RuntimeException("Owner not found"));
+                .orElse(null);
+        if (owner == null) {
+            farm.setStartDate(null);
+        } else {
+            farm.setStartDate(LocalDateTime.now());
+        }
         farm.setOwner(owner);
+
 
         List<Account> employees = accountRepository.findAllById(dto.getEmployeeIds());
         farm.setEmployees(employees);
@@ -169,13 +176,18 @@ public class FarmService {
 
 
     private FarmResponse toResponseDto(Farm farm) {
+        String ownerFarmName = null;
+        if (farm.getOwner() != null) {
+            ownerFarmName = farm.getOwner().getFirstName() + " " + farm.getOwner().getLastName();
+        }
         return FarmResponse.builder()
                 .id(farm.getId())
                 .code(farm.getCode())
                 .name(farm.getName())
                 .location(farm.getLocation())
                 .createdAt(farm.getCreatedAt())
-                .ownerFarmName(farm.getOwner().getFirstName() + " " + farm.getOwner().getLastName())
+                .startDate(farm.getStartDate())
+                .ownerFarmName(ownerFarmName)
                 .employeeNames(farm.getEmployees().stream()
                         .map(account -> account.getFirstName() + " " + account.getLastName())
                         .toList())

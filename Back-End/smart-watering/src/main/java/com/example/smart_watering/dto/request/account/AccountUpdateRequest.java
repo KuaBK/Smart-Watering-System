@@ -5,6 +5,8 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 
 @Getter
 @Setter
@@ -19,6 +21,7 @@ public class AccountUpdateRequest {
 
     String firstName;
 
+    String address;
     String lastName;
 
     @Pattern(

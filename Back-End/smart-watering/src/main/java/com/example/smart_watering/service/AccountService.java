@@ -16,12 +16,14 @@ import com.example.smart_watering.dto.request.account.PasswordUpdateRequest;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.account.AccountResponse;
 import com.example.smart_watering.dto.response.account.ResetPasswordResponse;
+import com.example.smart_watering.entity.Farm;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.entity.account.PasswordResetToken;
 import com.example.smart_watering.entity.account.Role;
 import com.example.smart_watering.exception.AppException;
 import com.example.smart_watering.exception.ErrorCode;
 import com.example.smart_watering.repository.AccountRepository;
+import com.example.smart_watering.repository.FarmRepository;
 import com.example.smart_watering.repository.PasswordResetTokenRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
@@ -44,6 +46,7 @@ public class AccountService {
     private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenRepository tokenRepository;
     private final JavaMailSender mailSender;
+    private final FarmRepository farmRepository;
     private final Cloudinary cloudinary;
 
     private static final Random RANDOM = new Random();
@@ -60,6 +63,7 @@ public class AccountService {
                 .firstName(accountRequest.getFirstName())
                 .lastName(accountRequest.getLastName())
                 .phoneNumber(accountRequest.getPhoneNumber())
+                .address(accountRequest.getAddress())
                 .build();
         validAccount.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
         Account savedAccount = accountRepository.save(validAccount);
@@ -120,6 +124,7 @@ public class AccountService {
         if (request.getFirstName() != null) account.setFirstName(request.getFirstName());
         if (request.getLastName() != null) account.setLastName(request.getLastName());
         if (request.getPhoneNumber() != null) account.setPhoneNumber(request.getPhoneNumber());
+        if (request.getAddress() != null) account.setAddress(request.getAddress());
 
         return accountRepository.save(account);
     }
@@ -133,11 +138,24 @@ public class AccountService {
         return false;
     }
 
+    public List<Farm> getFarmsAsEmployee(String accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        return farmRepository.findByEmployeesContains(account);
+    }
+
+    public List<Farm> getFarmsAsOwner(String accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        return farmRepository.findByOwner(account);
+    }
+
     private AccountResponse mapToAccountResponse(Account account) {
         return AccountResponse.builder()
                 .id(account.getId())
                 .email(account.getEmail())
                 .picture(account.getPicture())
+                .address(account.getAddress())
                 .firstName(account.getFirstName())
                 .lastName(account.getLastName())
                 .phoneNumber(account.getPhoneNumber())
