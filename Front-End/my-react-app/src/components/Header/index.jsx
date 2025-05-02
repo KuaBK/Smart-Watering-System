@@ -37,6 +37,9 @@ const Header = () => {
         navigate('/home');
     }
     const role = localStorage.getItem("ROLE");
+    const goToHelp = () => {
+        navigate('/user/help');
+    };
     return (
         <div className="h-[96px] w-full bg-[rgba(44,135,108,1)] flex justify-between items-center px-[20px] shadow-[0px_5px_4px_0px_rgba(0,0,0,0.25)] ">
             <div className='flex gap-[20px] ml-[20px]'>
@@ -45,7 +48,7 @@ const Header = () => {
             </div>
             <div className='flex gap-[20px]'>
                 {/* <img className="w-10 h-10 invert brightness-0 sepia saturate-200 hue-rotate-[20deg] contrast-150" src="/icon.svg" alt="icon" /> */}
-                <img className='fill-white' src={info} alt="" />
+                <img className='fill-white' src={info} onClick={goToHelp} alt="" />
                 <img className='fill-white' src={bell} alt="" />
                 <div className='group relative flex justify-center items-center'>
                     {/* <img className='brightness-100 sepia saturate-[500%] hue-rotate-[10deg] contrast-[120%] opacity-80' src={user} alt="" /> */}
@@ -76,4 +79,5 @@ const Header = () => {
         </div>
     );
 }
+
 export default Header;

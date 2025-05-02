@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import home from '../../assets/home.svg'
 // import thermometer from '../../assets/thermometer.svg'
 import droplet from '../../assets/droplet.svg'

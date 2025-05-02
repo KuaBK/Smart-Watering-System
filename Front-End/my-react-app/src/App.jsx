@@ -22,6 +22,7 @@ import Garden from './page/Garden';
 import User from './page/User';
 import AddGarden from './components/AddGarden';
 import UserDetail from './components/UserDetail';
+import Help from './components/Help/help';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
           {/* <Route path="airHumidity" element={<AirHumidity />} /> */}
           <Route path="light" element={<Light />} />
           <Route path="statistic" element={<Statistic />} />
+          <Route path="help" element={<Help />} />
         </Route>
 
         <Route path="/admin" element={<PageAdmin />} >
