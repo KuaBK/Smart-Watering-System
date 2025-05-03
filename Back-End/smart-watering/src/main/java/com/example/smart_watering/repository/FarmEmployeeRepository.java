@@ -12,4 +12,5 @@ public interface FarmEmployeeRepository extends JpaRepository<FarmEmployee, Long
     List<FarmEmployee> findByFarm(Farm farm);
     List<FarmEmployee> findByEmployee(Account employee);
     Optional<FarmEmployee> findByFarmAndEmployee(Farm farm, Account account);
+    void deleteByFarm(Farm farm);
 }

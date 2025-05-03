@@ -1,6 +1,7 @@
 package com.example.smart_watering.controller;
 
 import com.example.smart_watering.dto.request.farm.FarmRequest;
+import com.example.smart_watering.dto.request.farm.NotInFarmResponse;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.farm.FarmResponse;
 import com.example.smart_watering.entity.Farm;
@@ -85,13 +86,16 @@ public class FarmController {
     }
 
     @GetMapping("/{id}/outsiders")
-    public ApiResponse<List<String>> getPeopleNotInFarm(@PathVariable Long id) {
-
+    public ApiResponse<List<NotInFarmResponse>> getPeopleNotInFarm(@PathVariable Long id) {
         List<Account> outsiders = farmService.getEmployeesNotInFarm(id);
-        List<String> outsiderNames = outsiders.stream()
-                .map(account -> account.getFirstName() + " " + account.getLastName())
+        List<NotInFarmResponse> outsiderDTOs = outsiders.stream()
+                .map(account -> new NotInFarmResponse(
+                        account.getId(),
+                        account.getFirstName() + " " + account.getLastName(),
+                        account.getEmail()
+                ))
                 .toList();
 
-        return new ApiResponse<>(200, "People not in this farm", outsiderNames);
+        return new ApiResponse<>(200, "People not in this farm", outsiderDTOs);
     }
 }

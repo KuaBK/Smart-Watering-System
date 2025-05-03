@@ -14,6 +14,7 @@ import com.example.smart_watering.repository.FarmEmployeeRepository;
 import com.example.smart_watering.repository.FarmRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -104,12 +105,14 @@ public class FarmService {
         return toResponseDto(farm);
     }
 
-
+    @Transactional
     public boolean delete(Long id) {
         Farm farm = farmRepository.findById(id).orElseThrow(() -> new RuntimeException("Farm not found"));
         if(farm != null) {
+        farmEmployeeRepository.deleteByFarm(farm);
         farmRepository.deleteById(id);
-        return true;}
+        return true;
+        }
         else return false;
     }
 
