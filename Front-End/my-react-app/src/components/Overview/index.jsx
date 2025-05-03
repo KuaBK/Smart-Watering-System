@@ -1,432 +1,8 @@
+import Swal from "sweetalert2";
 import ProgressChart from "../ProgressChart";
-var data = [
-    {
-        name: "garden1",
-        minFavorable: 40,
-        maxFavorable: 60,
-        value: 50,
-        option: [
-            {
-                mode: "handwork",
-                handwork: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ]
-                }
-            },
-            {
-                mode: "time",
-                time: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startTime : "3:50 PM",
-                    endTime: "5:00 PM"
-                }
-            },
-            {
-                mode: "sensor",
-                sensor: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startWhen : "20",
-                    endWhen: "60"
-                }
-            }
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-        ]
-
-    },
-    {
-        name: "garden2",
-        minFavorable: 40,
-        maxFavorable: 60,
-        value: 50,
-        option: [
-            {
-                mode: "handwork",
-                handwork: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ]
-                }
-            },
-            {
-                mode: "time",
-                time: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startTime : "3:50 PM",
-                    endTime: "5:00 PM"
-                }
-            },
-            {
-                mode: "sensor",
-                sensor: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startWhen : "20",
-                    endWhen: "60"
-                }
-            }
-
-        ]
-
-    },
-    {
-        name: "garden3",
-        minFavorable: 40,
-        maxFavorable: 60,
-        value: 50,
-        option: [
-            {
-                mode: "handwork",
-                handwork: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ]
-                }
-            },
-            {
-                mode: "time",
-                time: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startTime : "3:50 PM",
-                    endTime: "5:00 PM"
-                }
-            },
-            {
-                mode: "sensor",
-                sensor: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startWhen : "20",
-                    endWhen: "60"
-                }
-            }
-
-        ]
-
-    },
-    {
-        name: "garden4",
-        minFavorable: 40,
-        maxFavorable: 60,
-        value: 50,
-        option: [
-            {
-                mode: "handwork",
-                handwork: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ]
-                }
-            },
-            {
-                mode: "time",
-                time: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startTime : "3:50 PM",
-                    endTime: "5:00 PM"
-                }
-            },
-            {
-                mode: "sensor",
-                sensor: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startWhen : "20",
-                    endWhen: "60"
-                }
-            }
-
-        ]
-
-    },
-    {
-        name: "garden5",
-        minFavorable: 40,
-        maxFavorable: 60,
-        value: 50,
-        option: [
-            {
-                mode: "handwork",
-                handwork: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ]
-                }
-            },
-            {
-                mode: "time",
-                time: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startTime : "3:50 PM",
-                    endTime: "5:00 PM"
-                }
-            },
-            {
-                mode: "sensor",
-                sensor: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startWhen : "20",
-                    endWhen: "60"
-                }
-            }
-
-        ]
-
-    },
-    {
-        name: "garden6",
-        minFavorable: 40,
-        maxFavorable: 60,
-        value: 50,
-        option: [
-            {
-                mode: "handwork",
-                handwork: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ]
-                }
-            },
-            {
-                mode: "time",
-                time: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startTime : "3:50 PM",
-                    endTime: "5:00 PM"
-                }
-            },
-            {
-                mode: "sensor",
-                sensor: {
-                    pump: [
-                        {
-                            namePump: 1,
-                            status: true
-                        },
-                        {
-                            namePump: 2,
-                            status: true
-                        },
-                        {
-                            namePump: 3,
-                            status: true
-                        },
-                    ],
-                    startWhen : "20",
-                    endWhen: "60"
-                }
-            }
-
-        ]
-
-    }
-]
 const CircularProgress = ({ percentage, label, color }) => {
     return (
         <div className="flex flex-col items-center">
@@ -464,11 +40,49 @@ const CircularProgress = ({ percentage, label, color }) => {
 };
 
 const Overview = ({ data }) => {
+    const [lastState,setLastState] = useState();
+    useEffect(() => {
+        const fetchLastState = async (init) => {
+
+            try {
+                if (init) {
+                    Swal.fire({
+                        title: 'Đang tải trạng thái hệ thống...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                }
+                const response = await axios.get(`${API_CE}/last-state`);
+                console.log(response.data)
+                setLastState(response.data)
+                if (init) {
+                    Swal.close();
+                }
+            } catch (error) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi tải trạng thái!',
+                    text: 'Không thể kết nối tới máy chủ.',
+                });
+                console.error("Lỗi gọi API:", error);
+            }
+        };
+        fetchLastState(true);
+        const interval = setInterval(() => {
+            fetchLastState(false);
+        }, 5000); // 5000ms = 5s
+
+        // Clear interval khi component unmount
+        return () => clearInterval(interval);
+    }, []);
     const {
-        temperature = 24,
-        soilMoisture = 80,
-        airHumidity = 70,
-        lightIntensity = 30
+        temperature = lastState?.temperatureState,
+        soilMoisture = lastState?.soilState,
+        airHumidity = lastState?.airState,
+        lightIntensity = lastState?.lightLevelState
     } = data || {};
 
     const minTemp = 0;
@@ -495,13 +109,13 @@ const Overview = ({ data }) => {
                                 }}
                             />
                             <div
-                                className="absolute top-0 transform -translate-x-1/2"
-                                style={{ left: `${getPercent(temperature)}%` }}
+                                className="absolute transform -translate-x-1/2"
+                                style={{ left: `${getPercent(temperature)}%`,bottom: '-0.25rem' }}
                             >
-                                <div className="w-0.5 h-4 bg-green-600 mx-auto" />
                                 <div className="text-green-700 font-bold text-sm mt-1 text-center">
                                     {temperature}°C
                                 </div>
+                                <div className="w-0.5 h-4 bg-green-600 mx-auto" />
                             </div>
                             <div className="absolute top-full left-0 w-full mt-2 text-sm font-semibold">
                                 <div className="relative w-full">

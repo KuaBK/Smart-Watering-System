@@ -1,6 +1,9 @@
 
+
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import dayjs from 'dayjs';
 const Card = ({ name }) => {
     return (
         <div className="bg-white py-[5px] px-[10px] w-fit text-[30px] font-[400] border border-black ">
@@ -19,18 +22,18 @@ const CardOption = ({ name, active, onClick }) => {
     );
 };
 const FarmDetail = () => {
-    console.log("adasdasdsdasdas");
-    const {idGarden} = useParams();
-    console.log(idGarden);
-    var listemp = [
-        "Tran Thanh Phong",
-        "Tran Thanh Phong",
-        "abc"
-    ]    
-    const [employeeSelect,setEmploySelect] =useState('');
+    const { idGarden } = useParams();
+    const navigate = useNavigate();
+    const handleNaviOver = () => {
+
+        navigate('/admin/garden/overview');
+    }
+    const [listEmpOut,setListEmpOut] = useState([]);
+    const [employeeSelect, setEmploySelect] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
-    const [filteredEmployees, setFilteredEmployees] = useState(listemp);
-    
+    const [filteredEmployees, setFilteredEmployees] = useState(listEmpOut);
+    const [infoGarden,setInfoGarden] = useState();
+
     // Tạo một hàm để handle việc thay đổi tìm kiếm
     const handleSearchChange = (e) => {
         setEmploySelect(e.target.value);
@@ -41,45 +44,86 @@ const FarmDetail = () => {
     const handleEmployeeSelect = (name) => {
         setEmploySelect(name);
     };
+    const handleAddEmployee = async () => {
+        // try {
+        //     const response = await axios.post(`${API_BE}/farm/${idGarden}/add/${idEmp}`, {
+        //         headers: { Authorization: `Bearer ${token}` },
+        //     });
+        //     // Cập nhật lại danh sách nhân viên
+        //     setInfoGarden(prev => ({
+        //         ...prev,
+        //         employee: [...prev.employee, { employeeName: employeeSelect }]
+        //     }));
+        //     setEmploySelect('');
+        // } catch (error) {
+        //     console.error("Lỗi thêm nhân viên:", error);
+        // }
+        console.log(employeeSelect)
+    };
+    
     useEffect(() => {
         // Chỉ thực hiện tìm kiếm sau 10s khi người dùng ngừng gõ
         const timer = setTimeout(() => {
             if (searchQuery) {
-                const filtered = listemp.filter((item) =>
+                const filtered = listEmpOut.filter((item) =>
                     item.toLowerCase().includes(searchQuery.toLowerCase())
                 );
                 setFilteredEmployees(filtered);
             } else {
-                setFilteredEmployees(listemp);
+                setFilteredEmployees(listEmpOut);
             }
-        }, 3000); // 10 giây debounce
+        }, 300); // 0.3 giây debounce
 
         // Cleanup function để clear timeout nếu người dùng nhập thêm
         return () => clearTimeout(timer);
     }, [searchQuery]);
-    const navigate = useNavigate();
-    const handleNaviOver = () =>{
-
-        navigate('/admin/garden/overview');
-    }
+    const token = localStorage.getItem("jwtToken");
+    useEffect(() => {
+        const fetchGarden = async () => {
+            try {
+                const response = await axios.get(`${API_BE}/farm/${idGarden}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setInfoGarden(response.data.result)
+            } catch (error) {
+                console.error("Lỗi gọi API:", error);
+            }
+        };
+        fetchGarden();
+        const fetchListEmp = async () => {
+            try {
+                const response = await axios.get(`${API_BE}/farm/${idGarden}/outsiders`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                console.log(response);
+                setListEmpOut(response.data.result)
+            } catch (error) {
+                console.error("Lỗi gọi API:", error);
+            }
+        };
+        fetchListEmp();
+    }, []);
+    useEffect(() => {
+        setFilteredEmployees(listEmpOut);
+    }, [listEmpOut]);
+    
     return (
         <div className="bg-white flex-1 px-[40px] py-[30px] box-border max-h-[100%] overflow-y-auto w-[100%] ">
             <div className="h-[100%] flex flex-col">
-                <h1 className="text-[50px] font-bold mb-4 text-start ">Khu vườn 1</h1>
+                <h1 className="text-[50px] font-bold mb-4 text-start ">Khu vườn {infoGarden?.name}</h1>
                 <div className="flex-1 flex flex-wrap gap-8">
                     {/* Left Section */}
                     <div className="basis-[100%] md:basis-[calc(70%-1rem)] bg-green-100 py-[35px] px-[30px] rounded-lg flex flex-col items-start ">
-                        <h2 className="font-bold text-[30px] mb-2">Khu vườn 1</h2>
+                        <h2 className="font-bold text-[30px] mb-2">Khu vườn {infoGarden?.name}</h2>
                         <p className="text-[30px] font-[400] text-start">
-                            111 đường ABC, phường Cẩm Thành, Thành phố Cẩm Phả, Quảng Ninh,
-                            Vietnam
+                            {infoGarden?.location}
                         </p>
                         <div className="mt-4">
                             <h2 className="font-bold text-[30px] mb-2 text-start">Nhân viên quản lý</h2>
                             <div className="flex gap-[10px] flex-wrap ">
-                                {listemp.map((item, index) => (
+                                {infoGarden?.employee?.map((item, index) => (
                                     <div key={index}>
-                                        <Card name={item} />
+                                        <Card name={item.employeeName} />
 
                                     </div>
                                 ))}
@@ -113,15 +157,15 @@ const FarmDetail = () => {
                                         </svg>
                                     </div>
                                 </div>
-                                <button className="bg-green-500 text-white px-6 py-auto rounded-md hover:bg-green-600 transition h-[42px] ">
+                                <button onClick={handleAddEmployee} className="bg-green-500 text-white px-6 py-auto rounded-md hover:bg-green-600 transition h-[42px] ">
                                     Thêm nhân viên
                                 </button>
 
                             </div>
-                            <div className="flex gap-[10px] flex-wrap ">
-                                {filteredEmployees.map((item, index) => (
+                            <div className="flex gap-[10px] flex-wrap h-[180px] overflow-auto">
+                                {filteredEmployees?.map((item, index) => (
                                     <div key={index}>
-                                        <CardOption name={item} active={item === employeeSelect } onClick={handleEmployeeSelect} />
+                                        <CardOption name={item} active={item === employeeSelect} onClick={handleEmployeeSelect} />
 
                                     </div>
                                 ))}
@@ -134,19 +178,13 @@ const FarmDetail = () => {
                     <div className="basis-full md:basis-[calc(30%-1rem)] flex flex-col gap-8">
                         <div className="bg-green-100 p-6 rounded-lg md:basis-[calc(60%-1rem)]">
                             <h2 className="font-bold text-[30px] text-start mb-2">Chủ khu vườn</h2>
-                            <p className="font-[400] text-[30px] text-start ">ngocanh@gmail.com</p>
-                            <p className="font-[400] text-[30px] text-start ">+8432564981</p>
-                            <p className="font-[400] text-[30px] text-start ">Lê Ngọc Anh</p>
-                            {/* <a
-                                href="#"
-                                className="text-blue-500 hover:underline text-sm mt-2 inline-block"
-                            >
-                                Xem thông tin
-                            </a> */}
+                            <p className="font-[400] text-[30px] text-start ">{infoGarden?.ownerName}</p>
+                            <p className="font-[400] text-[30px] text-start ">{infoGarden?.ownerAddress}</p>
+                            <p className="font-[400] text-[30px] text-start ">{infoGarden?.ownerPhoneNumber}</p>
                         </div>
                         <div className="bg-green-100 p-6 rounded-lg md:basis-[calc(40%-1rem)]">
                             <h2 className="font-bold text-[30px] text-start mb-2">Thời gian bắt đầu quản lý</h2>
-                            <p className="font-[400] text-[30px] text-start ">15h ngày 25/05/2025</p>
+                            <p className="font-[400] text-[30px] text-start ">{dayjs((infoGarden?.startDate), "HH:mm:ss DD-MM-YYYY").format("HH[h] ngày DD/MM/YYYY")}</p>
                         </div>
                     </div>
                 </div>

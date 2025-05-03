@@ -1,19 +1,9 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 const ManaGarden = () => {
-  const gardens = [
-    { id: "1", name: "Khu vườn 1", manager: "abc", startDate: "25/05/2025" },
-    { id: "2", name: "Khu vườn 2", manager: "abc", startDate: "25/05/2025" },
-    { id: "3", name: "Khu vườn 3", manager: "abc", startDate: "25/05/2025" },
-    { id: "4", name: "Khu vườn 4", manager: "abc", startDate: "25/05/2025" },
-    { id: "5", name: "Khu vườn 5", manager: "abc", startDate: "25/05/2025" },
-    { id: "6", name: "Khu vườn 6", manager: "abc", startDate: "25/05/2025" },
-    { id: "7", name: "Khu vườn 6", manager: "abc", startDate: "25/05/2025" },
-    { id: "8", name: "Khu vườn 6", manager: "abc", startDate: "25/05/2025" },
-    { id: "9", name: "Khu vườn 6", manager: "abc", startDate: "25/05/2025" },
-    { id: "10", name: "Khu vườn 6", manager: "abc", startDate: "25/05/2025" },
-  ];
+
   const navigate = useNavigate();
 
   const NaviDetail = (id) => {
@@ -22,17 +12,37 @@ const ManaGarden = () => {
   const NaviAddFarm = () => {
     navigate(`/admin/garden/addFarm`);
   };
-  const [gardenSelect,setGardenSelect] =useState('');
+  const [gardens, setGardens] = useState([]);
+  const [filteredGardens, setFilteredGardens] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredGardens, setFilteredGardens] = useState(gardens);
+
+  const token = localStorage.getItem('jwtToken');
+
+  // Cập nhật input tìm kiếm
   const handleSearchChange = (e) => {
-      setGardenSelect(e.target.value);
-      setSearchQuery(e.target.value);
+    setSearchQuery(e.target.value);
   };
+
+  // Gọi API lấy danh sách farm 1 lần khi load
   useEffect(() => {
-    // Chỉ thực hiện tìm kiếm sau 10s khi người dùng ngừng gõ
+    const fetchListGarden = async () => {
+      try {
+        const response = await axios.get(`${API_BE}/farm`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setGardens(response.data.result);
+        setFilteredGardens(response.data.result); // Khởi tạo luôn
+      } catch (error) {
+        console.error("Lỗi gọi API:", error);
+      }
+    };
+    fetchListGarden();
+  }, []);
+
+  // Lọc sau khi user dừng gõ 10 giây
+  useEffect(() => {
     const timer = setTimeout(() => {
-      if (searchQuery) {
+      if (searchQuery.trim()) {
         const filtered = gardens.filter((item) =>
           item.name.toLowerCase().includes(searchQuery.toLowerCase())
         );
@@ -40,11 +50,11 @@ const ManaGarden = () => {
       } else {
         setFilteredGardens(gardens);
       }
-    }, 3000); // 10 giây debounce
+    }, 1000); // 10 giây debounce
 
-    // Cleanup function để clear timeout nếu người dùng nhập thêm
-    return () => clearTimeout(timer);
-  }, [searchQuery])
+    return () => clearTimeout(timer); // Clear nếu user tiếp tục gõ
+  }, [searchQuery, gardens]);
+
 
 
 
@@ -61,8 +71,8 @@ const ManaGarden = () => {
           <div className="relative">
             <input
               type="text"
+              value={searchQuery}
               onChange={handleSearchChange}
-              value={gardenSelect}
               placeholder="Tìm kiếm khu vườn"
               className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
@@ -88,20 +98,18 @@ const ManaGarden = () => {
             <thead>
               <tr className="text-[20px] border-b-2 border-black sticky top-0 bg-[rgba(218,255,224,1)]">
                 <th className=" font-[600] px-4 py-2">STT</th>
-                <th className=" font-[600] px-4 py-2">Mã</th>
                 <th className=" font-[600] px-4 py-2">Tên khu vườn</th>
-                <th className=" font-[600] px-4 py-2">Người quản lý</th>
+                <th className=" font-[600] px-4 py-2">Chủ khu vườn</th>
                 <th className=" font-[600] px-4 py-2">Thời gian bắt đầu</th>
               </tr>
             </thead>
             <tbody className="">
-              {filteredGardens.map((garden, index) => (
-                <tr key={index} className="text-center border-b border-black h-[80px] " onClick={() => NaviDetail(garden.id)}>
-                  <td className=" px-4 py-2">{index + 1}</td>
+              {filteredGardens.map((garden) => (
+                <tr key={garden.id} className="text-center border-b border-black h-[80px] " onClick={() => NaviDetail(garden.id)}>
                   <td className=" px-4 py-2">{garden.id}</td>
                   <td className=" px-4 py-2">{garden.name}</td>
-                  <td className=" px-4 py-2">{garden.manager}</td>
-                  <td className=" px-4 py-2">{garden.startDate}</td>
+                  <td className=" px-4 py-2">{garden.ownerName}</td>
+                  <td className=" px-4 py-2">{garden.createdAt}</td>
                 </tr>
               ))}
             </tbody>

@@ -36,7 +36,7 @@ function App() {
         <Route path="/home" element={<PageIntro />} />
 
         <Route path="/user" element={<LayoutDefault />} >
-          <Route index element={<Navigate to="/user/statistic" replace />} />
+          <Route index element={<Navigate to="/user/overview" replace />} />
           <Route path="overview" element={<Overview />} />
           <Route path="soldMoisture" element={<SoldMoisture />} />
           {/* <Route path="airHumidity" element={<AirHumidity />} /> */}

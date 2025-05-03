@@ -5,6 +5,7 @@ import down from '../../assets/chevron-down.svg'
 import Equipment from '../Equipment';
 import light from '../../assets/light.svg'
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Light = () => {
     // const [selectedGarden, setSelectedGarden] = useState(1); // Track the selected garden
@@ -28,43 +29,133 @@ const Light = () => {
         };
     }, []);
     const [lastState, setLastState] = useState({});
-    useEffect(()=>{
-        const fetchLastState = async () => {
+    // useEffect(() => {
+    //     const fetchLastState = async (init) => {
+    //         try {
+    //             const response = await axios.get(`${API_CE}/last-state`);
+    //             // console.log(response.data)
+    //             setLastState(response.data)
+    //             setLight1(response.data.lightState === "1")
+    //             if (init) {
+    //                 setMode(response.data.modeLight === "notAuto" ? "handWork" : "overTime");
+    //             }
+
+
+    //         } catch (error) {
+    //             console.error("Lỗi gọi API:", error);
+    //         }
+    //     };
+    //     fetchLastState(true);
+    //     const interval = setInterval(() => {
+    //         fetchLastState(false);
+    //     }, 5000); // 5000ms = 5s
+
+    //     // Clear interval khi component unmount
+    //     return () => clearInterval(interval);
+    // }, []);
+    useEffect(() => {
+        const fetchLastState = async (init) => {
             try {
+                if (init) {
+                    Swal.fire({
+                        title: 'Đang tải trạng thái hệ thống...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                }
+    
                 const response = await axios.get(`${API_CE}/last-state`);
-                // console.log(response.data)
-                setLastState(response.data)
-                setLight1(response.data.lightState === "1")
-                console.log(response.data.lightState,light1)
+                setLastState(response.data);
+                setLight1(response.data.lightState === "1");
+                if (init) {
+                    setMode(response.data.modeLight === "notAuto" ? "handWork" : "overTime");
+                    Swal.close(); // Tắt loading
+                }
+    
             } catch (error) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi tải trạng thái!',
+                    text: 'Không thể kết nối tới máy chủ.',
+                });
                 console.error("Lỗi gọi API:", error);
             }
         };
-        fetchLastState();
+    
+        fetchLastState(true);
+    
         const interval = setInterval(() => {
-            fetchLastState();
-        }, 5000); // 5000ms = 5s
-
-        // Clear interval khi component unmount
+            fetchLastState(false);
+        }, 5000);
+    
         return () => clearInterval(interval);
-    },[]);
+    }, []);
+    
+    // const controlLight = async () => {
+    //     const param = light1 ? "on" : "off";
+    //     try {
+    //         const response = await axios.get(`${API_CE}/pump/${param}`);
+    //         if (response.status === 200) {
+    //             setLight1(!light1); // Chỉ thay đổi khi server phản hồi OK
+    //         } else {
+    //             console.error("Server trả về trạng thái lỗi:", response.status);
+    //         }
+    //     } catch (error) {
+    //         console.error("Lỗi gọi API:", error);
+    //     }
+    // };
     const controlLight = async () => {
-        const param = light1 ? "on" : "off";
+        const param = light1 ? "off" : "on";
+        console.log(param);
+
+        // Hiển thị loading
+        Swal.fire({
+            title: 'Đang gửi yêu cầu...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         try {
-            const response = await axios.get(`${API_CE}/pump/${param}`);
+            const response = await axios.get(`${API_CE}/light/${param}`);
+
+            Swal.close(); // Tắt loading
+
             if (response.status === 200) {
-                setLight1(!light1); // Chỉ thay đổi khi server phản hồi OK
+                setLight1(!light1);
+
+                // Hiển thị thông báo thành công
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: `Đã ${light1 ? 'tắt' : 'bật'} đèn thành công.`
+                });
             } else {
-                console.error("Server trả về trạng thái lỗi:", response.status);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: `Server trả về trạng thái lỗi: ${response.status}`
+                });
             }
         } catch (error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể kết nối đến máy chủ.'
+            });
             console.error("Lỗi gọi API:", error);
         }
     };
-    
+
+
 
     return (
-        <div className="flex flex-col h-[100%] max-w-[calc(100%-333px)] w-[calc(100%-333px)] flex-1 bg-[#c8efd0] px-[80px] py-[50px] box-border ">
+        <div className="flex flex-col h-[100%] max-w-[calc(100%-333px)] w-[calc(100%-333px)] flex-1 bg-white px-[80px] py-[50px] box-border ">
             {/* Tabs */}
             <div className={`border-b-0 border-black text-[50px] font-baloo font-[600] text-black  border-2 bg-[rgba(70,223,177,1)] }`}>
 
@@ -116,7 +207,6 @@ const Light = () => {
                             <div className="flex gap-[20px] w-full overflow-auto justify-center">
                                 {/* Machine 1 */}
                                 <Equipment name={"Light"} img={light} status={light1} setStatus={controlLight} />
-                                {/* <Equipment name={"abc"} img={light} status={machine1} setStatus={setMachine1} /> */}
 
                                 {/* Machine 2 */}
                             </div>
@@ -166,7 +256,7 @@ const Light = () => {
                                 >
                                     Cường độ ánh sáng &lt; 30 %
 
-                                   
+
                                 </div>
                             </div>
 
@@ -177,7 +267,7 @@ const Light = () => {
                                 >
                                     Cường độ ánh sáng &gt; 50 %
 
-                                    
+
                                 </div>
                             </div>
                             {/* <button className='rounded-[15px] border-[2px] border-[rgba(17,79,60,1)] bg-[rgba(135,255,167,1)] text-[30px] font-[400] font-baloo w-[140px] h-[50px] self-end'>Lưu</button> */}

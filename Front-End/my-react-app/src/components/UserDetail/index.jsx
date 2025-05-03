@@ -1,7 +1,29 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Swal from 'sweetalert2';
 
+const garden = [
+    { id: 1, name: "Khu vườn Ánh Dương", startDate: "2023-03-15" },
+    { id: 2, name: "Khu vườn Bình Minh", startDate: "2023-05-20" },
+];
 const UserDetail = () => {
+    const [gardens, setGarden] = useState(garden);
+    const [info, setInfo] = useState({
+        id: "0f7a89ea-75ac-4381-b42a-fb201862c193",
+        email: "test@gmail.com",
+        firstName: "A",
+        lastName: "Nguyễn Văn",
+        phoneNumber: "0944102241",
+        picture: null,
+        role: "FARMER"
+    });
+
+    const [name, setName] = useState();
+    const [phone, setPhone] = useState();
+    const [email, setEmail] = useState();
+    const [address, setAddress] = useState();
+    const { iduser } = useParams();
     const navigate = useNavigate();
     const handleNaviOver = () => {
 
@@ -9,25 +31,82 @@ const UserDetail = () => {
     }
     const [isEditing, setIsEditing] = useState(false);
     const toggleEditMode = () => {
-
+        if (isEditing) {
+            updateInfoUser();
+        }
         setIsEditing(!isEditing);
     };
-    const gardens = [
-        { id: 1, name: "Khu vườn Ánh Dương", startDate: "2023-03-15" },
-        { id: 2, name: "Khu vườn Bình Minh", startDate: "2023-05-20" },
-        { id: 3, name: "Khu vườn Hương Quê", startDate: "2023-07-10" },
-        { id: 4, name: "Khu vườn Mùa Thu", startDate: "2023-09-05" },
-        { id: 5, name: "Khu vườn Trăng Rằm", startDate: "2023-11-12" },
-        { id: 6, name: "Khu vườn Gió Mát", startDate: "2024-01-01" },
-        { id: 7, name: "Khu vườn Mặt Trời", startDate: "2024-03-08" },
-        { id: 8, name: "Khu vườn Sương Sớm", startDate: "2024-05-17" },
-        { id: 9, name: "Khu vườn Bình Yên", startDate: "2024-07-22" },
-        { id: 10, name: "Khu vườn Xanh Mát", startDate: "2024-09-30" }
-      ];
-      
+    const token = localStorage.getItem("jwtToken");
+    useEffect(() => {
+        const fecthFarmer = async () => {
+            try {
+                const response = await axios.get(`${API_BE}/account/${iduser}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setInfo(response.data.result);
+                setName(response.data.result.lastName + " " + response.data.result.firstName);
+                setPhone(response.data.result.phoneNumber);
+                setEmail(response.data.result.email);
+                setAddress(response.data.result.address);
+                // setAddress(response.data.result.address);
+            } catch (error) {
+                console.error("Lỗi gọi API:", error);
+            }
+        };
+        fecthFarmer();
+        const fetchListGarden = async () => {
+            try {
+              const response = await axios.get(`${API_BE}/account/employee/${iduser}`, {
+                headers: { Authorization: `Bearer ${token}` },
+              });
+              setGarden(response.data)
+            } catch (error) {
+              console.error("Lỗi gọi API:", error);
+            }
+          };
+          fetchListGarden();
+    }, []);
+    function splitFullName(fullName) {
+        if (!fullName || typeof fullName !== 'string') {
+            return { firstName: '', lastName: '' };
+        }
+
+        const parts = fullName.trim().split(/\s+/); // Tách bằng khoảng trắng
+        const firstName = parts.pop();              // Tên là phần cuối
+        const lastName = parts.join(' ');           // Họ và tên đệm là phần còn lại
+
+        return { firstName, lastName };
+    }
+    const updateInfoUser = async () => {
+        const { firstName, lastName } = splitFullName(name);
+        const data = {
+            firstName: firstName,
+            lastName: lastName,
+            phoneNumber: phone,
+            email: email,
+            address: address
+        };
+        try {
+            const response = await axios.patch(`${API_BE}/account/${iduser}`, data, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Cập nhật thành công',
+                text: 'Thông tin người dùng đã được cập nhật!',
+                confirmButtonColor: '#3085d6',
+                confirmButtonText: 'OK'
+            });
+        } catch (error) {
+            console.error("Lỗi gọi API:", error);
+        }
+    }
+
+
+
     return (
         <div className="bg-white flex-1 px-[80px] pt-[40px] box-border max-h-[calc(100vh-91px)] overflow-y-auto">
-            <div className="text-[32px] text-start font-bold mb-6">Quốc Á Võ</div>
+            <div className="text-[32px] text-start font-bold mb-6">{name}</div>
             <div className="flex flex-col gap-6 flex-1">
                 {/* Basic Information */}
                 <div className=" bg-green-100 p-6 rounded-lg">
@@ -43,8 +122,10 @@ const UserDetail = () => {
                             <label className="block font-[600] text-[25px] text-start ">Họ và tên</label>
                             <input
                                 type="text"
+                                value={name}
+                                onChange={(e) => setName(e.target.value)}
                                 disabled={!isEditing}
-                                placeholder="Nhập tên khu vườn"
+                                placeholder="Nhập tên nhân viên"
                                 className="w-full p-2 border border-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
                             />
                         </div>
@@ -52,6 +133,8 @@ const UserDetail = () => {
                             <label className="block font-[600] text-[25px] text-start ">Số điện thoại</label>
                             <input
                                 type="text"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
                                 disabled={!isEditing}
                                 placeholder="Nhập số điện thoại"
                                 className="w-full p-2 border border-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -61,6 +144,8 @@ const UserDetail = () => {
                             <label className="block font-[600] text-[25px] text-start ">Email</label>
                             <input
                                 type="text"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 disabled={!isEditing}
                                 placeholder="Nhập email"
                                 className="w-full p-2 border border-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -70,6 +155,8 @@ const UserDetail = () => {
                             <label className="block font-[600] text-[25px] text-start ">Địa chỉ</label>
                             <input
                                 type="text"
+                                value={address}
+                                onChange={(e) => setAddress(e.target.value)}
                                 disabled={!isEditing}
                                 placeholder="Nhập địa chỉ cụ thể"
                                 className="w-full p-2 border border-black focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -89,10 +176,10 @@ const UserDetail = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {gardens.map((item)=>(
-                                <tr key={item.id} className="h-[50px] border-b border-black " >
-                                    <td className="text-[25px] font[400] ">{item.name}</td>
-                                    <td className="text-[25px] font[400] ">{item.startDate}</td>
+                            {gardens?.map((item,index) => (
+                                <tr key={index} className="h-[50px] border-b border-black " >
+                                    <td className="text-[25px] font[400] ">{item.farmName}</td>
+                                    <td className="text-[25px] font[400] ">{item.startWorkingDate}</td>
                                 </tr>
                             ))}
 

@@ -18,8 +18,6 @@ const SidebarLink = ({ to, icon, label,sizetext="20px" }) => {
 };
 const Sidebar = () => {
     // const navigate = useNavigate()
-    console.log(localStorage.getItem("ROLE"));
-    console.log(localStorage.getItem("jwtToken"));
     var role = localStorage.getItem("ROLE");
     return (
         <div>

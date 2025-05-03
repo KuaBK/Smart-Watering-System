@@ -1,7 +1,6 @@
 
 
 const Equipment = ({ name, img,status =true ,setStatus,handle =true }) => {
-    console.log(status);
     return (
         <div className={`flex flex-col items-center w-[310px] h-[300px] px-[50px] py-[20px] rounded-[50px] border-[3px] border-[rgba(44,135,108,0.78)] ${status ? 'bg-[rgba(225,255,229,1)]' : 'bg-transparent'} 
        transition-all`}>

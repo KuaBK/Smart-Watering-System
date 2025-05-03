@@ -6,29 +6,10 @@ import { useNavigate } from 'react-router-dom';
 // import { ToastContainer, toast } from "react-toastify";
 import Swal from "sweetalert2";
 import axios from "axios";
-<<<<<<< HEAD
 import { decodeToken } from '../../Utils/decodeToken';
 
 // import { em, text } from 'framer-motion/client';
 
-=======
-
-// import { em, text } from 'framer-motion/client';
-
-// const account =
-//   [
-//     {
-//       "id": 1,
-//       email: "Duong@gmail.com",
-//       password: "123456"
-//     },
-//     {
-//       "id": 2,
-//       email: "abc@gmail.com",
-//       password: "123456"
-//     }
-//   ];
->>>>>>> e4a3a1c3f744ad05a0f96856f066958cb01b8d73
 function SignIn() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
@@ -37,11 +18,7 @@ function SignIn() {
   const handleShowPassword = () => {
     setShowPassword(!showPassword);
   }
-<<<<<<< HEAD
   
-=======
-
->>>>>>> e4a3a1c3f744ad05a0f96856f066958cb01b8d73
   const naviSignUp = () => {
     navigate('/register');
   }
@@ -87,11 +64,7 @@ function SignIn() {
   // }
   // useEffect(() => {
   //   const fetchLogin = async () => {
-<<<<<<< HEAD
   
-=======
-
->>>>>>> e4a3a1c3f744ad05a0f96856f066958cb01b8d73
   //     try {
   //       const response = await axios.post("http://localhost:8080/auth/login"
   //       );
@@ -109,30 +82,20 @@ function SignIn() {
   //   };
   //   fetchLogin();
   // },[]);
-<<<<<<< HEAD
   const handleSubmit = async() => {
     var form ={
-=======
-  const handleSubmit = async () => {
-    var form = {
->>>>>>> e4a3a1c3f744ad05a0f96856f066958cb01b8d73
       email: email,
       password: password
     }
     console.log(form);
     try {
-<<<<<<< HEAD
       const response = await axios.post(`${API_BE}/auth/login`,
-=======
-      const response = await axios.post("http://localhost:8080/auth/login",
->>>>>>> e4a3a1c3f744ad05a0f96856f066958cb01b8d73
         form
       );
       console.log(response);
       if (response.status === 200) {
         // setCVProfile(response.data.data)
         localStorage.setItem("jwtToken", response.data.result.token);
-<<<<<<< HEAD
         var role =decodeToken(response.data.result.token).scope;
         localStorage.setItem("ROLE",role);
         if (role === "ROLE_FARMER"){
@@ -141,10 +104,6 @@ function SignIn() {
           navigate('/admin');
         }
       }else {
-=======
-        navigate('/user');
-      } else {
->>>>>>> e4a3a1c3f744ad05a0f96856f066958cb01b8d73
         Swal.fire({
           title: "Thất bại!",
           text: `Tài khoản mật khẩu chưa đúng.`,

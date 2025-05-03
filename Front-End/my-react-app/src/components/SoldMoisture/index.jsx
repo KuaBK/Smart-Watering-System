@@ -5,6 +5,7 @@ import down from '../../assets/chevron-down.svg'
 import Equipment from '../Equipment';
 import Pump from '../../assets/pump.svg'
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const SoldMoisture = () => {
     // const [selectedGarden, setSelectedGarden] = useState(1); // Track the selected garden
@@ -29,42 +30,83 @@ const SoldMoisture = () => {
     }, []);
     const [lastState, setLastState] = useState({});
     useEffect(() => {
-        const fetchLastState = async () => {
+        const fetchLastState = async (init) => {
+
             try {
+                if (init) {
+                    Swal.fire({
+                        title: 'Đang tải trạng thái hệ thống...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                }
                 const response = await axios.get(`${API_CE}/last-state`);
-                // console.log(response.data)
+                console.log(response.data)
                 setLastState(response.data)
                 setPump1(response.data.pumpState === "1")
+                if (init) {
+                    setMode(response.data.modePump === "notAuto" ? "handWork" : "overTime");
+                    Swal.close();
+                }
             } catch (error) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi tải trạng thái!',
+                    text: 'Không thể kết nối tới máy chủ.',
+                });
                 console.error("Lỗi gọi API:", error);
             }
         };
-        fetchLastState();
+        fetchLastState(true);
         const interval = setInterval(() => {
-            fetchLastState();
+            fetchLastState(false);
         }, 5000); // 5000ms = 5s
 
         // Clear interval khi component unmount
         return () => clearInterval(interval);
     }, []);
     const controlPump = async () => {
-        const param = pump1 ? "on" : "off";
+        const param = pump1 ? "off" : "on";
+        Swal.fire({
+            title: 'Đang gửi yêu cầu...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
         try {
-            const response = await axios.get(`${API_CE}/light/${param}`);
+            const response = await axios.get(`${API_CE}/pump/${param}`);
             if (response.status === 200) {
                 setPump1(!pump1); // Chỉ thay đổi khi server phản hồi OK
-                console.log("Pump status changed:", response.data);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: `Đã ${pump1 ? 'tắt' : 'bật'} máy bơm thành công.`
+                });
             } else {
-                console.error("Server trả về trạng thái lỗi:", response.status);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: `Server trả về trạng thái lỗi: ${response.status}`
+                });
             }
         } catch (error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể kết nối đến máy chủ.'
+            });
             console.error("Lỗi gọi API:", error);
         }
     };
-    
+
 
     return (
-        <div className="flex flex-col h-[100%] max-w-[calc(100%-333px)] w-[calc(100%-333px)] flex-1 bg-[#c8efd0] px-[80px] py-[50px] box-border ">
+        <div className="flex flex-col h-[100%] max-w-[calc(100%-333px)] w-[calc(100%-333px)] flex-1 bg-white px-[80px] py-[50px] box-border ">
             {/* Tabs */}
             <div className={`border-b-0 border-black text-[50px] font-baloo font-[600] text-black  border-2 bg-[rgba(70,223,177,1)] }`}>
 

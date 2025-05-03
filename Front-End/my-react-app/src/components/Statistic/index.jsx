@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import {
     LineChart,
     Line,
@@ -10,28 +12,70 @@ import {
     Bar,
     Legend
 } from 'recharts';
+import Swal from 'sweetalert2';
 
-const temperatureData = [
-    { date: '8/3', temperature: 26 },
-    { date: '9/3', temperature: 35 },
-    { date: '10/3', temperature: 22 },
-    { date: '11/3', temperature: 38 },
-    { date: '12/3', temperature: 25 },
-    { date: '13/3', temperature: 32 },
-    { date: '14/3', temperature: 28 },
-];
+// const temperatureData = [
+//     { date: '8/3', temperature: 26 },
+//     { date: '9/3', temperature: 35 },
+//     { date: '10/3', temperature: 22 },
+//     { date: '11/3', temperature: 38 },
+//     { date: '12/3', temperature: 25 },
+//     { date: '13/3', temperature: 32 },
+//     { date: '14/3', temperature: 28 },
+// ];
 
-const humidityLightData = [
-    { date: '8/3', humidity: 50, soilMoisture: 45, lightIntensity: 55 },
-    { date: '9/3', humidity: 60, soilMoisture: 50, lightIntensity: 70 },
-    { date: '10/3', humidity: 55, soilMoisture: 48, lightIntensity: 65 },
-    { date: '11/3', humidity: 62, soilMoisture: 52, lightIntensity: 72 },
-    { date: '12/3', humidity: 58, soilMoisture: 47, lightIntensity: 67 },
-    { date: '13/3', humidity: 65, soilMoisture: 55, lightIntensity: 80 },
-    { date: '14/3', humidity: 60, soilMoisture: 50, lightIntensity: 68 },
-];
+// const humidityLightData = [
+//     { date: '8/3', humidity: 50, soilMoisture: 45, lightIntensity: 55 },
+//     { date: '9/3', humidity: 60, soilMoisture: 50, lightIntensity: 70 },
+//     { date: '10/3', humidity: 55, soilMoisture: 48, lightIntensity: 65 },
+//     { date: '11/3', humidity: 62, soilMoisture: 52, lightIntensity: 72 },
+//     { date: '12/3', humidity: 58, soilMoisture: 47, lightIntensity: 67 },
+//     { date: '13/3', humidity: 65, soilMoisture: 55, lightIntensity: 80 },
+//     { date: '14/3', humidity: 60, soilMoisture: 50, lightIntensity: 68 },
+// ];
 
 const Statistic = () => {
+    const [statistic,setStatistic] = useState();
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return `${date.getDate()}/${date.getMonth() + 1}`;
+    }
+    useEffect(() => {
+        const fetchLastState = async () => {
+
+            try {
+                    Swal.fire({
+                        title: 'Đang tải trạng thái hệ thống...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                const response = await axios.get(`${API_CE}/state/last-7-days`);
+                    setStatistic(response.data)
+                    Swal.close();
+            } catch (error) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi tải trạng thái!',
+                    text: 'Không thể kết nối tới máy chủ.',
+                });
+                console.error("Lỗi gọi API:", error);
+            }
+        };
+        fetchLastState();
+    }, []);
+    const humidityLightData = statistic?.map(item => ({
+        date: formatDate(item.time),
+        humidity: item.airState,
+        soilMoisture: item.soilState,
+        lightIntensity: item.lightLevelState
+    }));
+    const temperatureData = statistic?.map(item => ({
+        date: formatDate(item.time),
+        temperature: item.temperatureState
+    }));
     return (
         <div className="flex flex-col md:flex-row gap-6 p-6 rounded-xl w-full min-w-[900px] max-w-[1400px] mx-auto">
             <div className="flex-1 bg-green-50 rounded-xl p-4 shadow-md relative">
