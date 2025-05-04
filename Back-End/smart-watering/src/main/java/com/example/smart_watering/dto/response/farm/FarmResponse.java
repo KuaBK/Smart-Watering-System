@@ -32,5 +32,7 @@ public class FarmResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss dd-MM-yyyy")
     LocalDateTime startDate;
 
+    Boolean isActive;
+
     private List<FarmEmployee> employee;
 }

@@ -76,6 +76,7 @@ public class FarmService {
         farm.setLocation(dto.getLocation());
         farm.setCreatedAt(dto.getCreatedAt());
         farm.setCode("Farm-" + (farmRepository.count() + 1));
+        farm.setIsActive(false);
 
         Account owner = accountRepository.findById(dto.getOwnerId())
                 .orElse(null);
@@ -147,6 +148,11 @@ public class FarmService {
                 .build();
 
         farmEmployeeRepository.save(fe);
+        try {
+            sendGardenNotificationEmail(employee.getEmail(), farm.getName(), true);
+        }  catch (MessagingException e) {
+            log.error("Failed to send email: " + e.getMessage());
+        }
     }
 
 
@@ -161,6 +167,11 @@ public class FarmService {
                 .orElseThrow(() -> new RuntimeException("Employee not in farm"));
 
         farmEmployeeRepository.delete(fe);
+        try {
+            sendGardenNotificationEmail(employee.getEmail(), farm.getName(), false);
+        }  catch (MessagingException e) {
+            log.error("Failed to send email: " + e.getMessage());
+        }
     }
 
     public void sendEmail(@Email String to, String subject, String text) throws MessagingException {
@@ -215,6 +226,7 @@ public class FarmService {
                 .ownerAddress(ownerAddress)
                 .ownerPhoneNumber(ownerPhone)
                 .startDate(farm.getStartDate())
+                .isActive(farm.getIsActive())
                 .employee(farm.getEmployees())
                 .build();
     }

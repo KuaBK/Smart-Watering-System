@@ -40,6 +40,8 @@ public class Farm {
 
     LocalDateTime startDate;
 
+    Boolean isActive;
+
     @JsonIgnore
     @OneToMany(mappedBy = "farm")
     List<FarmEmployee> employees;
