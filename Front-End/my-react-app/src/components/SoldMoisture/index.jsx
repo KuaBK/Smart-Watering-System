@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ProgressChart from '../ProgressChart';
-import up from '../../assets/chevron-up.svg'
+import up from '../../assets/chevron-up.svg';
 import down from '../../assets/chevron-down.svg'
 import Equipment from '../Equipment';
 import Pump from '../../assets/pump.svg'
@@ -8,6 +8,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 const SoldMoisture = () => {
+    const idUser = localStorage.getItem("UserId");
+    const gardenName = localStorage.getItem("garden");
     // const [selectedGarden, setSelectedGarden] = useState(1); // Track the selected garden
     const [mode, setMode] = useState('overTime'); // Track the selected mode
     const [pump1, setPump1] = useState(false); // Machine 1 state
@@ -16,7 +18,6 @@ const SoldMoisture = () => {
     const [endTime, setEndTime] = useState(''); // End time for "Theo thời gian"
     const [isOpenMode, setisOpenMode] = useState(false);
     const dropdownMode = useRef(null)
-    const gardens = localStorage.getItem("garden");
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownMode.current && !dropdownMode.current.contains(event.target)) {
@@ -78,13 +79,50 @@ const SoldMoisture = () => {
             }
         });
         try {
-            const response = await axios.get(`${API_CE}/pump/${param}`);
+            const response = await axios.get(`${API_CE}/pump/${param}?userId=${idUser}&gardenName=${gardenName}`);
             if (response.status === 200) {
                 setPump1(!pump1); // Chỉ thay đổi khi server phản hồi OK
+                Swal.close();
                 Swal.fire({
                     icon: 'success',
                     title: 'Thành công!',
                     text: `Đã ${pump1 ? 'tắt' : 'bật'} máy bơm thành công.`
+                });
+            } else {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: `Server trả về trạng thái lỗi: ${response.status}`
+                });
+            }
+        } catch (error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể kết nối đến máy chủ.'
+            });
+            console.error("Lỗi gọi API:", error);
+        }
+    };
+    const handleSmartPump = async () =>{
+        Swal.fire({
+            title: 'Đang gửi yêu cầu...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        console.log(idUser,gardenName,startTime,endTime);
+        try {
+            const response = await axios.get(`${API_CE}/smart-controller/pump/start?userId=${idUser}&gardenName=${gardenName}&startTime=${startTime}&endTime=${endTime}`);
+            if (response.status === 200) {
+                setPump1(!pump1); 
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: `Đã kích hoạt trạng thái bơm nước tự động thành công.`
                 });
             } else {
                 Swal.fire({
@@ -112,7 +150,7 @@ const SoldMoisture = () => {
 
 
 
-                Khu vườn {gardens}
+                Khu vườn {gardenName}
             </div>
 
             {/* Content */}
@@ -194,7 +232,7 @@ const SoldMoisture = () => {
                                     />
                                 </div>
                             </div>
-                            <button className='rounded-[15px] border-[2px] border-[rgba(17,79,60,1)] bg-[rgba(135,255,167,1)] text-[30px] font-[400] font-baloo w-[140px] h-[50px] self-end'>Lưu</button>
+                            <button onClick={handleSmartPump} className='rounded-[15px] border-[2px] border-[rgba(17,79,60,1)] bg-[rgba(135,255,167,1)] text-[30px] font-[400] font-baloo w-[140px] h-[50px] self-end'>Lưu</button>
                         </div>
                     )}
 

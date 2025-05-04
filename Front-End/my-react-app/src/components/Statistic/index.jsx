@@ -66,7 +66,7 @@ const Statistic = () => {
         };
         fetchLastState();
     }, []);
-    const humidityLightData = statistic?.map(item => ({
+    const humidityLightData = statistic?.reverse().map(item => ({
         date: formatDate(item.time),
         humidity: item.airState,
         soilMoisture: item.soilState,

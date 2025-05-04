@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
+import Swal from "sweetalert2";
 const Card = ({ name }) => {
     return (
         <div className="bg-white py-[5px] px-[10px] w-fit text-[30px] font-[400] border border-black ">
@@ -11,28 +12,30 @@ const Card = ({ name }) => {
         </div>
     )
 }
-const CardOption = ({ name, active, onClick }) => {
+const CardOption = ({ name, active, onName, onId }) => {
     return (
         <div
-            className={`bg-white py-[5px] px-[10px] w-fit text-[30px] font-[400] border border-black ${active ? 'border-[#72f588] ' : ''}`}
-            onClick={() => onClick(name)}
+            className={`bg-white py-[5px] px-[10px] w-fit text-[30px] font-[400] border-2  ${active ? 'border-[#30ff53] ' : 'border-black'}`}
+            onClick={() => { onName(name.fullName), onId(name.id) }}
         >
-            {name}
+            {name.fullName}
         </div>
     );
 };
 const FarmDetail = () => {
     const { idGarden } = useParams();
     const navigate = useNavigate();
+    const token = localStorage.getItem("jwtToken");
     const handleNaviOver = () => {
 
         navigate('/admin/garden/overview');
     }
-    const [listEmpOut,setListEmpOut] = useState([]);
+    const [listEmpOut, setListEmpOut] = useState([]);
     const [employeeSelect, setEmploySelect] = useState('');
+    const [employeeSelectId, setEmploySelectId] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredEmployees, setFilteredEmployees] = useState(listEmpOut);
-    const [infoGarden,setInfoGarden] = useState();
+    const [infoGarden, setInfoGarden] = useState();
 
     // Tạo một hàm để handle việc thay đổi tìm kiếm
     const handleSearchChange = (e) => {
@@ -44,25 +47,155 @@ const FarmDetail = () => {
     const handleEmployeeSelect = (name) => {
         setEmploySelect(name);
     };
-    const handleAddEmployee = async () => {
-        // try {
-        //     const response = await axios.post(`${API_BE}/farm/${idGarden}/add/${idEmp}`, {
-        //         headers: { Authorization: `Bearer ${token}` },
-        //     });
-        //     // Cập nhật lại danh sách nhân viên
-        //     setInfoGarden(prev => ({
-        //         ...prev,
-        //         employee: [...prev.employee, { employeeName: employeeSelect }]
-        //     }));
-        //     setEmploySelect('');
-        // } catch (error) {
-        //     console.error("Lỗi thêm nhân viên:", error);
-        // }
-        console.log(employeeSelect)
+    const handleEmployeeSelectId = (name) => {
+        setEmploySelectId(name);
     };
-    
+    const handleAddEmployee = async () => {
+        try {
+            Swal.fire({
+                title: 'Đang thêm nhân viên...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            const response = await axios.post(`${API_BE}/farm/${idGarden}/add/${employeeSelectId}`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            setInfoGarden(prev => ({
+                ...prev,
+                employee: [...prev.employee, { employeeName: employeeSelect }]
+            }));
+            setEmploySelect('');
+            Swal.fire({
+                icon: 'success',
+                title: 'Đã thêm nhân viên thành công!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+
+            // TODO: Cập nhật lại danh sách farm hoặc state ở đây nếu cần
+
+        } catch (error) {
+            console.error("Lỗi thêm nhân viên:", error);
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi khi thêm nhân viên!',
+                text: error?.response?.data?.message || 'Đã có lỗi xảy ra',
+            });
+        }
+    };
+    const handleRemoveEmployee = async (e) => {
+        // Hiển thị hộp thoại xác nhận
+        const result = await Swal.fire({
+            title: 'Bạn có chắc chắn muốn xóa nhân viên này?',
+            text: "Hành động này không thể hoàn tác.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Xóa',
+            cancelButtonText: 'Hủy',
+        });
+
+        // Nếu người dùng xác nhận xóa, tiếp tục thực hiện yêu cầu API
+        if (result.isConfirmed) {
+            try {
+                Swal.fire({
+                    title: 'Đang xoá nhân viên...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                // Thực hiện gọi API để xóa nhân viên
+                const response = await axios.post(`${API_BE}/farm/${idGarden}/remove/${e}`, {}, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                // Đóng hộp thoại loading sau khi xóa nhân viên thành công
+                Swal.close();
+
+                // Hiển thị thông báo thành công
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đã xóa nhân viên thành công!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                setInfoGarden(prev => ({
+                    ...prev,
+                    employee: prev.employee.filter(emp => emp.employeeId !== e) // Lọc nhân viên đã bị xóa
+                }));
+                // Cập nhật lại danh sách nhân viên sau khi xóa
+
+            } catch (error) {
+                console.error("Lỗi xóa nhân viên:", error);
+
+                // Đóng hộp thoại loading nếu có lỗi
+                Swal.close();
+
+                // Hiển thị thông báo lỗi
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi khi xóa nhân viên!',
+                    text: error?.response?.data?.message || 'Đã có lỗi xảy ra',
+                });
+            }
+        } else {
+            // Nếu người dùng hủy, có thể hiển thị thông báo
+            Swal.fire({
+                icon: 'info',
+                title: 'Hủy xóa nhân viên',
+                text: 'Hành động xóa đã bị hủy.',
+            });
+        }
+    };
+
+    const handleRemoveFarm = async () => {
+        try {
+            // Hiển thị loading
+            Swal.fire({
+                title: 'Đang xoá farm...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            const response = await axios.delete(`${API_BE}/farm/${idGarden}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            // Khi xoá thành công
+            if (response.status == 200) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đã xoá farm thành công!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                handleNaviOver();
+            }
+
+            // TODO: Cập nhật lại danh sách farm hoặc state ở đây nếu cần
+
+        } catch (error) {
+            console.error("Lỗi xoá farm:", error);
+            Swal.close();
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi khi xoá farm!',
+                text: error?.response?.data?.message || 'Đã có lỗi xảy ra',
+            });
+        }
+
+    };
+
     useEffect(() => {
-        // Chỉ thực hiện tìm kiếm sau 10s khi người dùng ngừng gõ
         const timer = setTimeout(() => {
             if (searchQuery) {
                 const filtered = listEmpOut.filter((item) =>
@@ -77,7 +210,6 @@ const FarmDetail = () => {
         // Cleanup function để clear timeout nếu người dùng nhập thêm
         return () => clearTimeout(timer);
     }, [searchQuery]);
-    const token = localStorage.getItem("jwtToken");
     useEffect(() => {
         const fetchGarden = async () => {
             try {
@@ -95,7 +227,6 @@ const FarmDetail = () => {
                 const response = await axios.get(`${API_BE}/farm/${idGarden}/outsiders`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
-                console.log(response);
                 setListEmpOut(response.data.result)
             } catch (error) {
                 console.error("Lỗi gọi API:", error);
@@ -106,7 +237,7 @@ const FarmDetail = () => {
     useEffect(() => {
         setFilteredEmployees(listEmpOut);
     }, [listEmpOut]);
-    
+
     return (
         <div className="bg-white flex-1 px-[40px] py-[30px] box-border max-h-[100%] overflow-y-auto w-[100%] ">
             <div className="h-[100%] flex flex-col">
@@ -121,8 +252,8 @@ const FarmDetail = () => {
                         <div className="mt-4">
                             <h2 className="font-bold text-[30px] mb-2 text-start">Nhân viên quản lý</h2>
                             <div className="flex gap-[10px] flex-wrap ">
-                                {infoGarden?.employee?.map((item, index) => (
-                                    <div key={index}>
+                                {infoGarden?.employee?.map((item) => (
+                                    <div onClick={() => handleRemoveEmployee(item.employeeId)} key={item.employeeId}>
                                         <Card name={item.employeeName} />
 
                                     </div>
@@ -163,9 +294,9 @@ const FarmDetail = () => {
 
                             </div>
                             <div className="flex gap-[10px] flex-wrap h-[180px] overflow-auto">
-                                {filteredEmployees?.map((item, index) => (
-                                    <div key={index}>
-                                        <CardOption name={item} active={item === employeeSelect} onClick={handleEmployeeSelect} />
+                                {filteredEmployees?.map((item) => (
+                                    <div key={item.id}>
+                                        <CardOption name={item} active={item.fullName === employeeSelect} onName={handleEmployeeSelect} onId={handleEmployeeSelectId} />
 
                                     </div>
                                 ))}
@@ -191,7 +322,7 @@ const FarmDetail = () => {
 
                 {/* Buttons */}
                 <div className="flex justify-center mt-6 space-x-10">
-                    <button className="bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition">
+                    <button onClick={handleRemoveFarm} className="bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition">
                         Xóa
                     </button>
                     <button onClick={handleNaviOver} className="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition">

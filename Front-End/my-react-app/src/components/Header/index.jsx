@@ -26,8 +26,9 @@ const Header = () => {
         };
     }, []);
     const handleLogout = () => {
-        navigate('/signin');
         localStorage.removeItem('jwtToken');
+        localStorage.removeItem("garden");
+        navigate('/signin');
     }
     const handleChangePW = () => {
         navigate('/changepassword');
@@ -56,7 +57,7 @@ const Header = () => {
                     {isOpen && (
                         
                             (role === "ROLE_FARMER") ? (
-                            <div ref={divRef} className='h-fit absolute top-full right-[50%] w-fit bg-white border-[2px] border-[rgba(70,223,177,0.8)] rounded-b-[15px] rounded-tl-[15px]'>
+                            <div ref={divRef} className='h-fit absolute top-full right-[50%] w-fit bg-white border-[2px] border-[rgba(70,223,177,0.8)] rounded-b-[15px] rounded-tl-[15px] z-50 '>
 
                                 <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  rounded-tl-[10px]' onClick={handleChangePW}>Thay đổi mật khẩu</div>
                                 <div className=' h-[50px] whitespace-nowrap text-[rgba(70,223,177,0.8)] text-[20px] font-[600]  text-black hover:bg-[rgba(70,223,177,0.8)] hover:text-white flex items-center px-[5px]  ' onClick={handleChangeGarden}>Thay đổi khu vườn</div>

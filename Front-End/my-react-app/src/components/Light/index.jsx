@@ -8,7 +8,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 const Light = () => {
-    // const [selectedGarden, setSelectedGarden] = useState(1); // Track the selected garden
+    const idUser = localStorage.getItem("UserId");
+    const gardenName = localStorage.getItem("garden");
     const [mode, setMode] = useState('overTime'); // Track the selected mode
     const [light1, setLight1] = useState(false); // Machine 1 state
     // const [machine2, setMachine2] = useState(true); // Machine 2 state
@@ -16,7 +17,6 @@ const Light = () => {
     const [endTime, setEndTime] = useState(''); // End time for "Theo thời gian"
     const [isOpenMode, setisOpenMode] = useState(false);
     const dropdownMode = useRef(null)
-    const gardens = localStorage.getItem('garden');
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownMode.current && !dropdownMode.current.contains(event.target)) {
@@ -29,30 +29,7 @@ const Light = () => {
         };
     }, []);
     const [lastState, setLastState] = useState({});
-    // useEffect(() => {
-    //     const fetchLastState = async (init) => {
-    //         try {
-    //             const response = await axios.get(`${API_CE}/last-state`);
-    //             // console.log(response.data)
-    //             setLastState(response.data)
-    //             setLight1(response.data.lightState === "1")
-    //             if (init) {
-    //                 setMode(response.data.modeLight === "notAuto" ? "handWork" : "overTime");
-    //             }
-
-
-    //         } catch (error) {
-    //             console.error("Lỗi gọi API:", error);
-    //         }
-    //     };
-    //     fetchLastState(true);
-    //     const interval = setInterval(() => {
-    //         fetchLastState(false);
-    //     }, 5000); // 5000ms = 5s
-
-    //     // Clear interval khi component unmount
-    //     return () => clearInterval(interval);
-    // }, []);
+   
     useEffect(() => {
         const fetchLastState = async (init) => {
             try {
@@ -94,19 +71,6 @@ const Light = () => {
         return () => clearInterval(interval);
     }, []);
     
-    // const controlLight = async () => {
-    //     const param = light1 ? "on" : "off";
-    //     try {
-    //         const response = await axios.get(`${API_CE}/pump/${param}`);
-    //         if (response.status === 200) {
-    //             setLight1(!light1); // Chỉ thay đổi khi server phản hồi OK
-    //         } else {
-    //             console.error("Server trả về trạng thái lỗi:", response.status);
-    //         }
-    //     } catch (error) {
-    //         console.error("Lỗi gọi API:", error);
-    //     }
-    // };
     const controlLight = async () => {
         const param = light1 ? "off" : "on";
         console.log(param);
@@ -121,7 +85,7 @@ const Light = () => {
         });
 
         try {
-            const response = await axios.get(`${API_CE}/light/${param}`);
+            const response = await axios.get(`${API_CE}/light/${param}?userId=${idUser}&gardenName=${gardenName}`);
 
             Swal.close(); // Tắt loading
 
@@ -151,7 +115,40 @@ const Light = () => {
             console.error("Lỗi gọi API:", error);
         }
     };
-
+    const handleSmartLight = async () =>{
+        Swal.fire({
+            title: 'Đang gửi yêu cầu...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        console.log(idUser,gardenName,startTime,endTime);
+        try {
+            const response = await axios.get(`${API_CE}/smart-controller/light/start?userId=${idUser}&gardenName=${gardenName}&startTime=${startTime}&endTime=${endTime}`);
+            if (response.status === 200) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công!',
+                    text: `Đã kích hoạt trạng thái đèn tự động thành công.`
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: `Server trả về trạng thái lỗi: ${response.status}`
+                });
+            }
+        } catch (error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể kết nối đến máy chủ.'
+            });
+            console.error("Lỗi gọi API:", error);
+        }
+    };
 
 
     return (
@@ -161,7 +158,7 @@ const Light = () => {
 
 
 
-                Khu vườn {gardens}
+                Khu vườn {gardenName}
             </div>
 
             {/* Content */}
@@ -243,7 +240,7 @@ const Light = () => {
                                     />
                                 </div>
                             </div>
-                            <button className='rounded-[15px] border-[2px] border-[rgba(17,79,60,1)] bg-[rgba(135,255,167,1)] text-[30px] font-[400] font-baloo w-[140px] h-[50px] self-end'>Lưu</button>
+                            <button onClick={handleSmartLight} className='rounded-[15px] border-[2px] border-[rgba(17,79,60,1)] bg-[rgba(135,255,167,1)] text-[30px] font-[400] font-baloo w-[140px] h-[50px] self-end'>Lưu</button>
                         </div>
                     )}
 

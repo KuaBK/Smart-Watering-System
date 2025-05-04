@@ -89,7 +89,7 @@ const ManaUser = () => {
                 <th className="font-[600] px-4 py-2">Tên người dùng</th>
                 <th className="font-[600] px-4 py-2">Email</th>
                 <th className="font-[600] px-4 py-2">Điện thoại</th>
-                <th className="font-[600] px-4 py-2">Số vườn quản lý</th>
+                <th className="font-[600] px-4 py-2">Vai trò</th>
               </tr>
 
             </thead>
@@ -100,7 +100,7 @@ const ManaUser = () => {
                   <td className=" px-4 py-2">{user.lastName} {user.firstName}</td>
                   <td className=" px-4 py-2">{user.email}</td>
                   <td className=" px-4 py-2">{user.phoneNumber}</td>
-                  <td className=" px-4 py-2">{user.totalGardens}</td>
+                  <td className=" px-4 py-2">{user.role}</td>
                 </tr>
               ))}
             </tbody>

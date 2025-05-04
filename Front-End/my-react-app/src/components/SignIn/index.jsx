@@ -98,6 +98,8 @@ function SignIn() {
         localStorage.setItem("jwtToken", response.data.result.token);
         var role =decodeToken(response.data.result.token).scope;
         localStorage.setItem("ROLE",role);
+        localStorage.setItem("email",email);
+        localStorage.setItem("UserId",response.data.result.userId);
         if (role === "ROLE_FARMER"){
           navigate('/home');
         }else{
