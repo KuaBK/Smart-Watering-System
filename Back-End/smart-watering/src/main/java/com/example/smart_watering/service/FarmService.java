@@ -3,6 +3,7 @@ package com.example.smart_watering.service;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.smart_watering.dto.request.farm.FarmRequest;
+import com.example.smart_watering.dto.response.farm.FarmEmployeeByFarmResponse;
 import com.example.smart_watering.dto.response.farm.FarmResponse;
 import com.example.smart_watering.entity.Farm;
 import com.example.smart_watering.entity.FarmEmployee;
@@ -216,6 +217,14 @@ public class FarmService {
             ownerAddress = farm.getOwner().getAddress();
             ownerPhone = farm.getOwner().getPhoneNumber();
         }
+        List<FarmEmployeeByFarmResponse> employeeResponses = farm.getEmployees().stream()
+                .map(emp -> FarmEmployeeByFarmResponse.builder()
+                        .id(emp.getId())
+                        .employeeId(emp.getEmployee().getId())
+                        .employeeName(emp.getEmployeeName())
+                        .startWorkingDate(emp.getStartWorkingDate())
+                        .build())
+                .toList();
         return FarmResponse.builder()
                 .id(farm.getId())
                 .code(farm.getCode())
@@ -227,7 +236,7 @@ public class FarmService {
                 .ownerPhoneNumber(ownerPhone)
                 .startDate(farm.getStartDate())
                 .isActive(farm.getIsActive())
-                .employee(farm.getEmployees())
+                .employee(employeeResponses)
                 .build();
     }
 }

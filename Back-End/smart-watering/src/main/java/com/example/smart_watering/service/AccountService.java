@@ -166,6 +166,7 @@ public class AccountService {
 
                     return FarmEmployeeResponse.builder()
                             .farmName(farm.getName())
+                            .isActive(farm.getIsActive())
                             .ownerName(ownerName)
                             .startWorkingDate(farmEmployee.getStartWorkingDate())
                             .build();

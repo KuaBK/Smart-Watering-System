@@ -3,6 +3,7 @@ package com.example.smart_watering.entity;
 import com.example.smart_watering.entity.account.Account;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,7 +34,6 @@ public class Farm {
 
     String picture;
 
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private Account owner;
@@ -42,7 +42,7 @@ public class Farm {
 
     Boolean isActive;
 
-    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "farm")
     List<FarmEmployee> employees;
 }

@@ -1,4 +1,4 @@
-package com.example.smart_watering.dto.request.farm;
+package com.example.smart_watering.dto.response.farm;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

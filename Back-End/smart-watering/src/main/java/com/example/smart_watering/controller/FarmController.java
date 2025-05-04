@@ -1,16 +1,14 @@
 package com.example.smart_watering.controller;
 
 import com.example.smart_watering.dto.request.farm.FarmRequest;
-import com.example.smart_watering.dto.request.farm.NotInFarmResponse;
+import com.example.smart_watering.dto.response.farm.NotInFarmResponse;
 import com.example.smart_watering.dto.response.ApiResponse;
 import com.example.smart_watering.dto.response.farm.FarmResponse;
-import com.example.smart_watering.entity.Farm;
 import com.example.smart_watering.entity.account.Account;
 import com.example.smart_watering.service.FarmService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

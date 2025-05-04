@@ -11,13 +11,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class FarmEmployeeResponse {
-    String farmName;
-
-    Boolean isActive;
-
-    String ownerName;
+public class FarmEmployeeByFarmResponse {
+    private Long id;
+    private String employeeId;
+    private String employeeName;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    LocalDate startWorkingDate;
+    private LocalDate startWorkingDate;
 }

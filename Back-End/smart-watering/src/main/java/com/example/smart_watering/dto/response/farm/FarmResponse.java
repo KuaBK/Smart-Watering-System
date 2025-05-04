@@ -34,5 +34,5 @@ public class FarmResponse {
 
     Boolean isActive;
 
-    private List<FarmEmployee> employee;
+    private List<FarmEmployeeByFarmResponse> employee;
 }

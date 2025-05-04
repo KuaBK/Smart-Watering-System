@@ -49,6 +49,7 @@ public class Account {
 
     String address;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "employee")
     List<FarmEmployee> workingFarms;
 }
