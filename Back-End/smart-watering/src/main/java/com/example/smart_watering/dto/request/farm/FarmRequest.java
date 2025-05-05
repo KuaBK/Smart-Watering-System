@@ -4,7 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Data
 @NoArgsConstructor
@@ -16,5 +16,4 @@ public class FarmRequest {
     String location;
     LocalDate createdAt = LocalDate.now();
     String ownerId;
-    List<String> employeeIds;
 }

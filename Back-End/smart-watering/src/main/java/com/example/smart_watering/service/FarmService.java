@@ -29,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -87,22 +88,9 @@ public class FarmService {
             farm.setStartDate(LocalDateTime.now());
         }
         farm.setOwner(owner);
+        farm.setEmployees(new ArrayList<>());
 
         farm = farmRepository.save(farm);
-        final Farm savedFarm = farm;
-
-        List<FarmEmployee> employeeLinks = accountRepository.findAllById(dto.getEmployeeIds()).stream()
-                .map(account -> FarmEmployee.builder()
-                        .farm(savedFarm)
-                        .employee(account)
-                        .employeeName(account.getFirstName() + " " + account.getLastName())
-                        .startWorkingDate(LocalDate.now())
-                        .build())
-                .toList();
-
-        farmEmployeeRepository.saveAll(employeeLinks);
-
-        farm.setEmployees(employeeLinks);
 
         return toResponseDto(farm);
     }
@@ -217,7 +205,8 @@ public class FarmService {
             ownerAddress = farm.getOwner().getAddress();
             ownerPhone = farm.getOwner().getPhoneNumber();
         }
-        List<FarmEmployeeByFarmResponse> employeeResponses = farm.getEmployees().stream()
+        List<FarmEmployeeByFarmResponse> employeeResponses = farm.getEmployees() == null ? List.of()
+                : farm.getEmployees().stream()
                 .map(emp -> FarmEmployeeByFarmResponse.builder()
                         .id(emp.getId())
                         .employeeId(emp.getEmployee().getId())
