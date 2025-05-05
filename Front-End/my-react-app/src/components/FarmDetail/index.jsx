@@ -5,23 +5,60 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from 'dayjs';
 import Swal from "sweetalert2";
-const Card = ({ name }) => {
-    return (
-        <div className="bg-white py-[5px] px-[10px] w-fit text-[30px] font-[400] border border-black ">
-            {name}
-        </div>
-    )
-}
-const CardOption = ({ name, active, onName, onId }) => {
+const Card = ({ name, onRemove }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
     return (
         <div
-            className={`bg-white py-[5px] px-[10px] w-fit text-[30px] font-[400] border-2  ${active ? 'border-[#30ff53] ' : 'border-black'}`}
-            onClick={() => { onName(name.fullName), onId(name.id) }}
+            className="relative bg-white px-4 py-2 border rounded-md cursor-pointer w-[150px] h-[50px] flex items-center justify-center transition"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
-            {name.fullName}
+            {isHovered ? (
+                <button 
+                    onClick={onRemove} 
+                    className="text-red-600 font-bold text-xl hover:text-red-800"
+                >
+                    ×
+                </button>
+            ) : (
+                <span className="text-center">{name}</span>
+            )}
         </div>
     );
 };
+
+// const Card = ({ name }) => {
+//     return (
+//         <div className="bg-white py-[5px] px-[10px] w-fit text-[30px] font-[400] border border-black ">
+//             {name}
+//         </div>
+//     )
+// }
+// const CardOption = ({ name, active, onName, onId }) => {
+//     return (
+//         <div
+//             className={`bg-white py-[5px] px-[10px] w-fit text-[30px] font-[400] border-2  ${active ? 'border-[#30ff53] ' : 'border-black'}`}
+//             onClick={() => { onName(name.fullName), onId(name.id) }}
+//         >
+//             {name.fullName}
+//         </div>
+//     );
+// };
+const CardOption = ({ name, active, onName, onId }) => {
+    return (
+        <div
+            onClick={() => {
+                onName(name.email);
+                onId(name.id);
+            }}
+            className={`px-4 py-2 border rounded-md cursor-pointer ${active ? 'bg-green-300' : 'bg-white'}`}
+        >
+            {name.email}
+        </div>
+    );
+};
+
 const FarmDetail = () => {
     const { idGarden } = useParams();
     const navigate = useNavigate();
@@ -50,6 +87,50 @@ const FarmDetail = () => {
     const handleEmployeeSelectId = (name) => {
         setEmploySelectId(name);
     };
+    
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (searchQuery) {
+                const filtered = listEmpOut.filter((item) =>
+                    item.email.toLowerCase().includes(searchQuery.toLowerCase())
+                );
+                setFilteredEmployees(filtered);
+            } else {
+                setFilteredEmployees(listEmpOut);
+            }
+        }, 300); // 0.3 giây debounce
+
+        // Cleanup function để clear timeout nếu người dùng nhập thêm
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+    useEffect(() => {
+        setFilteredEmployees(listEmpOut);
+    }, [listEmpOut]);
+    useEffect(() => {
+        const fetchGarden = async () => {
+            try {
+                const response = await axios.get(`${API_BE}/farm/${idGarden}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setInfoGarden(response.data.result)
+            } catch (error) {
+                console.error("Lỗi gọi API:", error);
+            }
+        };
+        fetchGarden();
+        const fetchListEmp = async () => {
+            try {
+                const response = await axios.get(`${API_BE}/farm/${idGarden}/outsiders`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setListEmpOut(response.data.result)
+            } catch (error) {
+                console.error("Lỗi gọi API:", error);
+            }
+        };
+        fetchListEmp();
+    }, []);
     const handleAddEmployee = async () => {
         try {
             Swal.fire({
@@ -194,50 +275,6 @@ const FarmDetail = () => {
         }
 
     };
-
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            if (searchQuery) {
-                const filtered = listEmpOut.filter((item) =>
-                    item.toLowerCase().includes(searchQuery.toLowerCase())
-                );
-                setFilteredEmployees(filtered);
-            } else {
-                setFilteredEmployees(listEmpOut);
-            }
-        }, 300); // 0.3 giây debounce
-
-        // Cleanup function để clear timeout nếu người dùng nhập thêm
-        return () => clearTimeout(timer);
-    }, [searchQuery]);
-    useEffect(() => {
-        const fetchGarden = async () => {
-            try {
-                const response = await axios.get(`${API_BE}/farm/${idGarden}`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setInfoGarden(response.data.result)
-            } catch (error) {
-                console.error("Lỗi gọi API:", error);
-            }
-        };
-        fetchGarden();
-        const fetchListEmp = async () => {
-            try {
-                const response = await axios.get(`${API_BE}/farm/${idGarden}/outsiders`, {
-                    headers: { Authorization: `Bearer ${token}` },
-                });
-                setListEmpOut(response.data.result)
-            } catch (error) {
-                console.error("Lỗi gọi API:", error);
-            }
-        };
-        fetchListEmp();
-    }, []);
-    useEffect(() => {
-        setFilteredEmployees(listEmpOut);
-    }, [listEmpOut]);
-
     return (
         <div className="bg-white flex-1 px-[40px] py-[30px] box-border max-h-[100%] overflow-y-auto w-[100%] ">
             <div className="h-[100%] flex flex-col">
@@ -254,7 +291,7 @@ const FarmDetail = () => {
                             <div className="flex gap-[10px] flex-wrap ">
                                 {infoGarden?.employee?.map((item) => (
                                     <div onClick={() => handleRemoveEmployee(item.employeeId)} key={item.employeeId}>
-                                        <Card name={item.employeeName} />
+                                        <Card name={item.employeeName } />
 
                                     </div>
                                 ))}
@@ -296,7 +333,7 @@ const FarmDetail = () => {
                             <div className="flex gap-[10px] flex-wrap h-[180px] overflow-auto">
                                 {filteredEmployees?.map((item) => (
                                     <div key={item.id}>
-                                        <CardOption name={item} active={item.fullName === employeeSelect} onName={handleEmployeeSelect} onId={handleEmployeeSelectId} />
+                                        <CardOption name={item} active={item.email === employeeSelect} onName={handleEmployeeSelect} onId={handleEmployeeSelectId} />
 
                                     </div>
                                 ))}

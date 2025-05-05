@@ -113,7 +113,7 @@ const UserDetail = () => {
                     <div className="flex justify-between">
                         <h2 className="font-bold text-[30px] text-start mb-4">Thông tin cá nhân</h2>
 
-                        <button onClick={toggleEditMode} className="bg-transparent h-[45px] text-black px-4 py-2 border border-black text-[15px] font-[600] hover:bg-green-600">
+                        <button onClick={toggleEditMode} className="bg-transparent h-[45px] text-black px-4 py-2 border border-black text-[15px] font-[600] hover:bg-green-300">
                             Chỉnh sửa
                         </button>
                     </div>
