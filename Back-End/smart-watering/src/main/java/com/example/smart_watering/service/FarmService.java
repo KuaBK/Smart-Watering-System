@@ -211,6 +211,7 @@ public class FarmService {
                         .id(emp.getId())
                         .employeeId(emp.getEmployee().getId())
                         .employeeName(emp.getEmployeeName())
+                        .employeeEmail(emp.getEmployee().getEmail())
                         .startWorkingDate(emp.getStartWorkingDate())
                         .build())
                 .toList();

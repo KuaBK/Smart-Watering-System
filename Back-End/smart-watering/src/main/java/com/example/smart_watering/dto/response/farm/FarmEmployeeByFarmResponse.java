@@ -15,6 +15,7 @@ public class FarmEmployeeByFarmResponse {
     private Long id;
     private String employeeId;
     private String employeeName;
+    String employeeEmail;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate startWorkingDate;
