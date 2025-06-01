@@ -1,4 +1,3 @@
-
 import Swal from "sweetalert2";
 import ProgressChart from "../ProgressChart";
 import axios from "axios";
@@ -15,7 +14,6 @@ const CircularProgress = ({ percentage = 0, label,color }) => {
     }, [percentage]);
     return (
         <div className="flex flex-col items-center">
-            <div className="relative w-48 h-48 md:w-64 md:h-64">
             <div className="relative w-48 h-48 md:w-64 md:h-64">
                 <svg className="w-full h-full transform -rotate-90">
                     <circle
@@ -52,7 +50,7 @@ const CircularProgress = ({ percentage = 0, label,color }) => {
         </div>
     );
 };
-const favrange ={
+const favrange = {
     minTemp : 20,
     maxTemp: 30,
     minSold: 40,
@@ -61,7 +59,7 @@ const favrange ={
     maxAir:60,
     minLight: 30,
     maxLight:40
-}
+};
 const Overview = () => {
     const [lastState, setLastState] = useState();
     const gardenName = localStorage.getItem("garden");
@@ -99,12 +97,6 @@ const Overview = () => {
 
         return () => clearInterval(interval);
     }, []);
-    // const {
-    //     temperature = lastState?.temperatureState,
-    //     lastState?.soilState = lastState?.soilState,
-    //     lastState?.airState = lastState?.airState,
-    //     lastState?.lightLevelState = lastState?.lightLevelState
-    // };
 
     const minTemp = 0;
     const maxTemp = 50;
@@ -165,11 +157,6 @@ const Overview = () => {
                         <CircularProgress percentage={lastState?.lightLevelState} label="Cường độ ánh sáng" color={ lastState?.lightLevelState > favrange.minLight && lastState?.lightLevelState < favrange.maxLight ? 'text-[#208F30]' : 'text-[#E50000]'} />
                     </div>
 
-                    {/* <div className="flex justify-center mt-20">
-                        <button className="px-12 py-4 text-lg font-bold text-black transition bg-green-400 rounded-full hover:bg-green-500">
-                            Điều chỉnh
-                        </button>
-                    </div> */}
                 </div>
                 <div className="flex flex-col self-start w-full gap-10 -mt-12 text-base md:w-1/3 md:ml-20">
                     <div>
