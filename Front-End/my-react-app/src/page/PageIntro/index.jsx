@@ -11,6 +11,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 
 const Garden = ({ name, tem, sold, lig, air, active }) => {
+    console.log(active);
     return (
         <div className="flip-card rounded-[50px]">
             <div className="flip-card-inner rounded-[50px]">
@@ -19,7 +20,7 @@ const Garden = ({ name, tem, sold, lig, air, active }) => {
                 </div>
                 {active ? (
                     <div className="flip-card-back bg-[rgba(4,159,45,0.54)] p-[20px]  rounded-[50px]">
-                        <h2 className="h-[30%] font-baloo font-[400] text-[40px] text-white ">Garden {name}</h2>
+                        {/* <h2 className="h-[30%] font-baloo font-[400] text-[40px] text-white ">Garden {name}</h2> */}
                         <div className="flex flex-col justify-center items-center w-full h-[60%] m-t-[30px]">
                             <div className="flex flex-grow justify-center items-center h-[50%] w-full">
                                 <div className="flex items-center justify-center border-r border-b border-white text-white font-baloo px-[10px] font-[400] text-[35px] w-[50%] h-full "><img src={thermometer} alt="" />{tem}°C</div>
@@ -37,6 +38,7 @@ const Garden = ({ name, tem, sold, lig, air, active }) => {
                     </div>
                 )}
             </div>
+            <h2 className="h-[30%] font-[600] text-[40px] text-[rgba(4,159,45,0.54)] ">Garden {name}</h2>
         </div>
 
 
@@ -44,22 +46,24 @@ const Garden = ({ name, tem, sold, lig, air, active }) => {
 };
 // export Garden;
 const PageIntro = () => {
-    const name = "1";
     const navigate = useNavigate();
-    const selectGarden = (e,active=true) => {
-        if (active){
+    const selectGarden = (e, active = true) => {
+        if (active) {
             localStorage.setItem("garden", e);
-        navigate('/user');
-        } else{
+            navigate('/user');
+        } else {
             Swal.fire({
                 icon: "error",
                 title: "Xin lỗi..",
                 text: "Khu vườn chưa đi nào hoạt động!",
-              });
+            });
         }
-        
+
     }
     const [lastState, setLastState] = useState({});
+    const [listFarm, setListFarm] = useState([]);
+    const userId = localStorage.getItem("UserId");
+    const token = localStorage.getItem('jwtToken');
 
     useEffect(() => {
         const fetchLastState = async (init) => {
@@ -88,6 +92,28 @@ const PageIntro = () => {
             }
         };
         fetchLastState(true);
+
+        const fetchListFarm = async () => {
+
+            try {
+
+
+                const response = await axios.get(`${API_BE}/account/employee/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                setListFarm(response.data);
+                console.log(response);
+            } catch (error) {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi tải trạng thái!',
+                    text: 'Không thể kết nối tới máy chủ.',
+                });
+                console.error("Lỗi gọi API:", error);
+            }
+        };
+        fetchListFarm();
         const interval = setInterval(() => {
             fetchLastState(false);
         }, 5000); // 5000ms = 5s
@@ -96,12 +122,22 @@ const PageIntro = () => {
         return () => clearInterval(interval);
     }, []);
     return (
-        <div  className="flex flex-col h-screen w-[100vw] ">
+        <div className="flex flex-col h-screen w-[100vw] ">
             <Header />
             <div className="flex flex-wrap justify-start items-center max-w-[100vw] overflow-hidden h-[100%] m-[50px]">
-                <div onClick={() => selectGarden(name)}>
-                    <Garden name={name} tem={lastState.temperatureState} sold={lastState.soilState} lig={lastState.lightLevelState} air={lastState.airState} />
-                </div>
+                {listFarm?.map((item,id) => (
+                    <div onClick={() => selectGarden(item.farmName,item.isActive)} key={id}>
+                        <Garden
+                            name={item.farmName}
+                            tem={lastState.temperatureState}
+                            sold={lastState.soilState}
+                            lig={lastState.lightLevelState}
+                            air={lastState.airState}
+                            active={item.isActive}
+                        />
+                    </div>
+                ))}
+
             </div>
         </div>
     )

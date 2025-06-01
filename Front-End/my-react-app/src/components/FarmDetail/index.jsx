@@ -17,7 +17,7 @@ const Card = ({ name, onRemove }) => {
             {isHovered ? (
                 <button 
                     onClick={onRemove} 
-                    className="text-red-600 font-bold text-xl hover:text-red-800"
+                    className="text-xl font-bold text-red-600 hover:text-red-800"
                 >
                     ×
                 </button>
@@ -279,7 +279,7 @@ const FarmDetail = () => {
         <div className="bg-white flex-1 px-[40px] py-[30px] box-border max-h-[100%] overflow-y-auto w-[100%] ">
             <div className="h-[100%] flex flex-col">
                 <h1 className="text-[50px] font-bold mb-4 text-start ">Khu vườn {infoGarden?.name}</h1>
-                <div className="flex-1 flex flex-wrap gap-8">
+                <div className="flex flex-wrap flex-1 gap-8">
                     {/* Left Section */}
                     <div className="basis-[100%] md:basis-[calc(70%-1rem)] bg-green-100 py-[35px] px-[30px] rounded-lg flex flex-col items-start ">
                         <h2 className="font-bold text-[30px] mb-2">Khu vườn {infoGarden?.name}</h2>
@@ -297,7 +297,7 @@ const FarmDetail = () => {
                                 ))}
                             </div>
                         </div>
-                        <div className="mt-4 w-full">
+                        <div className="w-full mt-4">
                             <h2 className="font-bold text-[30px] mb-2 text-start">Thêm nhân viên quản lý</h2>
                             <div className="flex gap-[20px] mb-6">
                                 <div className="flex-1">
@@ -307,7 +307,7 @@ const FarmDetail = () => {
                                             onChange={handleSearchChange}
                                             value={employeeSelect}
                                             placeholder="Tìm kiếm nhân viên"
-                                            className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                            className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                                         />
                                         <svg
                                             className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
@@ -359,10 +359,10 @@ const FarmDetail = () => {
 
                 {/* Buttons */}
                 <div className="flex justify-center mt-6 space-x-10">
-                    <button onClick={handleRemoveFarm} className="bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600 transition">
+                    <button onClick={handleRemoveFarm} className="px-6 py-3 text-white transition bg-red-500 rounded-md hover:bg-red-600">
                         Xóa
                     </button>
-                    <button onClick={handleNaviOver} className="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 transition">
+                    <button onClick={handleNaviOver} className="px-6 py-3 text-white transition bg-green-500 rounded-md hover:bg-green-600">
                         Trở lại
                     </button>
                 </div>

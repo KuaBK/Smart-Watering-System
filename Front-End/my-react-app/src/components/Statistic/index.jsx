@@ -78,9 +78,9 @@ const Statistic = () => {
     }));
     return (
         <div className="flex flex-col md:flex-row gap-6 p-6 rounded-xl w-full min-w-[900px] max-w-[1400px] mx-auto">
-            <div className="flex-1 bg-green-50 rounded-xl p-4 shadow-md relative">
-                <div className="mb-4 flex items-center justify-center relative">
-                    <h2 className="text-lg font-bold text-green-700 text-center">
+            <div className="relative flex-1 p-4 shadow-md bg-green-50 rounded-xl">
+                <div className="relative flex items-center justify-center mb-4">
+                    <h2 className="text-lg font-bold text-center text-green-700">
                         NHIỆT ĐỘ (°C)
                     </h2>
                     <span className="absolute right-0 text-sm text-green-400">2025</span>
@@ -96,14 +96,15 @@ const Statistic = () => {
                             dataKey="temperature"
                             stroke="#047857"
                             strokeWidth={3}
+                            name="Nhiệt độ"
                             dot={{ r: 4, stroke: '#047857', strokeWidth: 2, fill: '#bbf7d0' }}
                         />
                     </LineChart>
                 </ResponsiveContainer>
             </div>
-            <div className="flex-1 bg-green-50 rounded-xl p-4 shadow-md relative">
-                <div className="mb-4 flex items-center justify-center relative">
-                    <h2 className="text-lg font-bold text-green-700 text-center">
+            <div className="relative flex-1 p-4 shadow-md bg-green-50 rounded-xl">
+                <div className="relative flex items-center justify-center mb-4">
+                    <h2 className="text-lg font-bold text-center text-green-700">
                         ĐỘ ẨM KHÔNG KHÍ, ĐẤT, CƯỜNG ĐỘ ÁNH SÁNG
                     </h2>
                     <span className="absolute right-0 text-sm text-green-400">2025</span>

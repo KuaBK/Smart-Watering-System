@@ -4,6 +4,8 @@ import home from '../../assets/home.svg'
 import droplet from '../../assets/droplet.svg'
 import sun from '../../assets/sun.svg'
 import pieChart from '../../assets/pie-chart.svg'
+import users from '../../assets/users.svg'
+import iconhis from '../../assets/iconHis.svg'
 import { NavLink } from 'react-router-dom'
 const SidebarLink = ({ to, icon, label,sizetext="20px" }) => {
     return (
@@ -27,11 +29,12 @@ const Sidebar = () => {
                     <SidebarLink to="soldMoisture" icon={droplet} label="Độ ẩm đất" />
                     <SidebarLink to="light" icon={sun} label="Ánh sáng" />
                     <SidebarLink to="statistic" icon={pieChart} label="Thống kê" />
+                    <SidebarLink to="repairLog" icon={iconhis} label="Lịch sử" />
                 </div>}
             {role === "ROLE_ADMIN" &&
                 <div className="h-[100%] w-[330px] bg-[rgba(44,135,108,0.78)]  ">
                     <SidebarLink to="garden" icon={home} label="Quản lý khu vườn" sizetext="10px"/>
-                    <SidebarLink to="user" icon={droplet} label="Quản lý người dùng" sizetext="10px" />
+                    <SidebarLink to="user" icon={users} label="Quản lý người dùng" sizetext="10px" />
                 </div>}
         </div>
 

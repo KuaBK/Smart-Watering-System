@@ -30,6 +30,16 @@ const SoldMoisture = () => {
         };
     }, []);
     const [lastState, setLastState] = useState({});
+    const favrange ={
+    minTemp : 20,
+    maxTemp: 30,
+    minSold: 40,
+    maxSold: 60,
+    minAir: 40,
+    maxAir:60,
+    minLight: 30,
+    maxLight:40
+}
     useEffect(() => {
         const fetchLastState = async (init) => {
 
@@ -44,11 +54,13 @@ const SoldMoisture = () => {
                     });
                 }
                 const response = await axios.get(`${API_CE}/last-state`);
-                console.log(response.data)
                 setLastState(response.data)
                 setPump1(response.data.pumpState === "1")
                 if (init) {
                     setMode(response.data.modePump === "notAuto" ? "handWork" : "overTime");
+                    if (response.data.modePump !== "notAuto"){
+                        handleSetTimeAuto();
+                    }
                     Swal.close();
                 }
             } catch (error) {
@@ -106,6 +118,38 @@ const SoldMoisture = () => {
             console.error("Lỗi gọi API:", error);
         }
     };
+    const handleSetTimeAuto = async()=>{
+        Swal.fire({
+            title: 'Đang gửi yêu cầu...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        try {
+            const response = await axios.get(`${API_CE}/action/latest?type=6`);
+            if (response.status === 200) {
+                setStartTime(response.data.startTime);
+                setEndTime(response.data.endTime);
+                Swal.close();
+            } else {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: `Server trả về trạng thái lỗi: ${response.status}`
+                });
+            }
+        } catch (error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể kết nối đến máy chủ.'
+            });
+            console.error("Lỗi gọi API:", error);
+        }
+    }
     const handleSmartPump = async () =>{
         Swal.fire({
             title: 'Đang gửi yêu cầu...',
@@ -157,7 +201,7 @@ const SoldMoisture = () => {
             <div className="flex py-[50px] border-2 h-[100%] w-full max-w-full border-black bg-[rgba(192,255,236,1)]">
                 {/* Chart Section */}
                 <div className="text-center w-[550px] border-r border-black">
-                    <ProgressChart value={lastState.soilState} min={40} max={60} />
+                    <ProgressChart percentage={lastState.soilState} min={favrange.minSold} max={favrange.maxSold} />
                 </div>
 
                 {/* Controls Section */}
@@ -211,9 +255,9 @@ const SoldMoisture = () => {
 
                             </div>
 
-                            <div className="my-6 flex justify-between w-full">
+                            <div className="flex justify-between w-full my-6">
                                 <div className='flex gap-[20px]'>
-                                    <label className="flex text-lg font-semibold whitespace-nowrap items-center">Bắt đầu:</label>
+                                    <label className="flex items-center text-lg font-semibold whitespace-nowrap">Bắt đầu:</label>
                                     <input
                                         type="time"
                                         value={startTime}
@@ -243,7 +287,7 @@ const SoldMoisture = () => {
                                 <div
                                     className="relative border border-black rounded-[15px] flex-1 bg-[#89FF9A] px-[20px] cursor-pointer text-start flex items-center h-[45px] text-[25px]"
                                 >
-                                    Độ ẩm đất &lt; 30 %
+                                    Độ ẩm đất &lt; {favrange.minSold} %
                                 </div>
                             </div>
 
@@ -252,7 +296,7 @@ const SoldMoisture = () => {
                                 <div
                                     className="relative border border-black rounded-[15px] flex-1 bg-[#89FF9A] px-[20px] cursor-pointer text-start flex items-center h-[45px] text-[25px]"
                                 >
-                                    Độ ẩm đất &gt; 50 %
+                                    Độ ẩm đất &gt; {favrange.maxSold} %
                                 </div>
                             </div>
                             {/* <button className='rounded-[15px] border-[2px] border-[rgba(17,79,60,1)] bg-[rgba(135,255,167,1)] text-[30px] font-[400] font-baloo w-[140px] h-[50px] self-end'>Lưu</button> */}

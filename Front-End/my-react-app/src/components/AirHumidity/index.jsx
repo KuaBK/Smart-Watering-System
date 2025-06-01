@@ -11,7 +11,7 @@ const AirHumidity = () => {
     const [mode, setMode] = useState('overTime'); // Track the selected mode
     const [machine1, setMachine1] = useState(false); // Machine 1 state
     // const [machine2, setMachine2] = useState(true); // Machine 2 state
-    const [startTime, setStartTime] = useState(''); // Start time for "Theo thời gian"
+    const [startTime, setStartTime] = useState('14:20'); // Start time for "Theo thời gian"
     const [endTime, setEndTime] = useState(''); // End time for "Theo thời gian"
     // const [startThreshold, setStartThreshold] = useState(''); // Start threshold for "Theo cảm biến"
     // const [stopThreshold, setStopThreshold] = useState(''); // Stop threshold for "Theo cảm biến"
@@ -117,13 +117,12 @@ const AirHumidity = () => {
                         <div className='flex flex-col items-start'>
                             <div className="flex gap-[20px] w-full overflow-auto justify-center ">
                                 <Equipment name={"abc"} img={Pump} status={machine1} setStatus={setMachine1} />
-                                {/* <Equipment name={"abc"} img={Pump} status={machine1} setStatus={setMachine1} /> */}
 
                             </div>
 
-                            <div className="my-6 flex justify-between w-full">
+                            <div className="flex justify-between w-full my-6">
                                 <div className='flex gap-[20px]'>
-                                    <label className="flex text-lg font-semibold whitespace-nowrap items-center">Bắt đầu:</label>
+                                    <label className="flex items-center text-lg font-semibold whitespace-nowrap">Bắt đầu:</label>
                                     <input
                                         type="time"
                                         value={startTime}

@@ -17,6 +17,16 @@ const Light = () => {
     const [endTime, setEndTime] = useState(''); // End time for "Theo thời gian"
     const [isOpenMode, setisOpenMode] = useState(false);
     const dropdownMode = useRef(null)
+    const favrange = {
+        minTemp: 20,
+        maxTemp: 30,
+        minSold: 40,
+        maxSold: 60,
+        minAir: 40,
+        maxAir: 60,
+        minLight: 30,
+        maxLight: 40
+    }
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownMode.current && !dropdownMode.current.contains(event.target)) {
@@ -29,7 +39,7 @@ const Light = () => {
         };
     }, []);
     const [lastState, setLastState] = useState({});
-   
+
     useEffect(() => {
         const fetchLastState = async (init) => {
             try {
@@ -42,15 +52,18 @@ const Light = () => {
                         }
                     });
                 }
-    
+
                 const response = await axios.get(`${API_CE}/last-state`);
                 setLastState(response.data);
                 setLight1(response.data.lightState === "1");
                 if (init) {
                     setMode(response.data.modeLight === "notAuto" ? "handWork" : "overTime");
+                    if (response.data.modeLight !== "notAuto") {
+                        handleSetTimeAuto();
+                    }
                     Swal.close(); // Tắt loading
                 }
-    
+
             } catch (error) {
                 Swal.close();
                 Swal.fire({
@@ -61,16 +74,16 @@ const Light = () => {
                 console.error("Lỗi gọi API:", error);
             }
         };
-    
+
         fetchLastState(true);
-    
+
         const interval = setInterval(() => {
             fetchLastState(false);
         }, 5000);
-    
+
         return () => clearInterval(interval);
     }, []);
-    
+
     const controlLight = async () => {
         const param = light1 ? "off" : "on";
         console.log(param);
@@ -115,7 +128,8 @@ const Light = () => {
             console.error("Lỗi gọi API:", error);
         }
     };
-    const handleSmartLight = async () =>{
+
+    const handleSetTimeAuto = async () => {
         Swal.fire({
             title: 'Đang gửi yêu cầu...',
             allowOutsideClick: false,
@@ -123,7 +137,39 @@ const Light = () => {
                 Swal.showLoading();
             }
         });
-        console.log(idUser,gardenName,startTime,endTime);
+        try {
+            const response = await axios.get(`${API_CE}/action/latest?type=8`);
+            if (response.status === 200) {
+                setStartTime(response.data.startTime);
+                setEndTime(response.data.endTime);
+                Swal.close();
+            } else {
+                Swal.close();
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: `Server trả về trạng thái lỗi: ${response.status}`
+                });
+            }
+        } catch (error) {
+            Swal.close();
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi!',
+                text: 'Không thể kết nối đến máy chủ.'
+            });
+            console.error("Lỗi gọi API:", error);
+        }
+    }
+    const handleSmartLight = async () => {
+        Swal.fire({
+            title: 'Đang gửi yêu cầu...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        console.log(idUser, gardenName, startTime, endTime);
         try {
             const response = await axios.get(`${API_CE}/smart-controller/light/start?userId=${idUser}&gardenName=${gardenName}&startTime=${startTime}&endTime=${endTime}`);
             if (response.status === 200) {
@@ -165,7 +211,7 @@ const Light = () => {
             <div className="flex py-[50px] border-2 h-[100%] w-full max-w-full border-black bg-[rgba(192,255,236,1)]">
                 {/* Chart Section */}
                 <div className="text-center w-[550px] border-r border-black">
-                    <ProgressChart value={lastState.lightLevelState} min={40} max={60} />
+                    <ProgressChart percentage={lastState.lightLevelState} min={favrange.minLight} max={favrange.maxLight} />
                 </div>
 
                 {/* Controls Section */}
@@ -219,9 +265,9 @@ const Light = () => {
 
                             </div>
 
-                            <div className="my-6 flex justify-between w-full">
+                            <div className="flex justify-between w-full my-6">
                                 <div className='flex gap-[20px]'>
-                                    <label className="flex text-lg font-semibold whitespace-nowrap items-center">Bắt đầu:</label>
+                                    <label className="flex items-center text-lg font-semibold whitespace-nowrap">Bắt đầu:</label>
                                     <input
                                         type="time"
                                         value={startTime}
@@ -251,7 +297,7 @@ const Light = () => {
                                 <div
                                     className="relative border border-black rounded-[15px] flex-1 bg-[#89FF9A] px-[20px] cursor-pointer text-start flex items-center h-[45px] text-[25px]"
                                 >
-                                    Cường độ ánh sáng &lt; 30 %
+                                    Cường độ ánh sáng &lt; {favrange.minLight} %
 
 
                                 </div>
@@ -262,7 +308,7 @@ const Light = () => {
                                 <div
                                     className="relative border border-black rounded-[15px] flex-1 bg-[#89FF9A] px-[20px] cursor-pointer text-start flex items-center h-[45px] text-[25px]"
                                 >
-                                    Cường độ ánh sáng &gt; 50 %
+                                    Cường độ ánh sáng &gt; {favrange.maxLight} %
 
 
                                 </div>
