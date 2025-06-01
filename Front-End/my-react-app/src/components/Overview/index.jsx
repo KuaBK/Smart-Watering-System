@@ -1,3 +1,4 @@
+
 import Swal from "sweetalert2";
 import ProgressChart from "../ProgressChart";
 import axios from "axios";
@@ -14,6 +15,7 @@ const CircularProgress = ({ percentage = 0, label,color }) => {
     }, [percentage]);
     return (
         <div className="flex flex-col items-center">
+            <div className="relative w-48 h-48 md:w-64 md:h-64">
             <div className="relative w-48 h-48 md:w-64 md:h-64">
                 <svg className="w-full h-full transform -rotate-90">
                     <circle
@@ -65,7 +67,6 @@ const Overview = () => {
     const gardenName = localStorage.getItem("garden");
     useEffect(() => {
         const fetchLastState = async (init) => {
-
             try {
                 if (init) {
                     Swal.fire({
@@ -77,8 +78,7 @@ const Overview = () => {
                     });
                 }
                 const response = await axios.get(`${API_CE}/last-state`);
-                console.log(response.data)
-                setLastState(response.data)
+                setLastState(response.data);
                 if (init) {
                     Swal.close();
                 }
@@ -95,9 +95,8 @@ const Overview = () => {
         fetchLastState(true);
         const interval = setInterval(() => {
             fetchLastState(false);
-        }, 5000); // 5000ms = 5s
+        }, 5000);
 
-        // Clear interval khi component unmount
         return () => clearInterval(interval);
     }, []);
     // const {
