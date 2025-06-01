@@ -133,6 +133,7 @@ public class FarmService {
                 .farm(farm)
                 .employee(employee)
                 .employeeName(employee.getFirstName() + " " + employee.getLastName())
+                .employeeEmail(employee.getEmail())
                 .startWorkingDate(LocalDate.now())
                 .build();
 

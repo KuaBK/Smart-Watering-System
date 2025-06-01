@@ -119,6 +119,7 @@ public class AccountController {
                 .firstName(account.getFirstName())
                 .lastName(account.getLastName())
                 .picture(account.getPicture())
+                .address(account.getAddress())
                 .role(account.getRole())
                 .build();
 //        response.setNoPassword(!StringUtils.hasText(account.getPassword()));
