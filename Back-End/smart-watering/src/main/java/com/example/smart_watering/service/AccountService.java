@@ -70,10 +70,37 @@ public class AccountService {
                 .phoneNumber(accountRequest.getPhoneNumber())
                 .address(accountRequest.getAddress())
                 .build();
+
+        sendWelcomeEmailPlain(accountRequest.getEmail(), accountRequest.getFirstName() + " " + accountRequest.getLastName());
+
         validAccount.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
         Account savedAccount = accountRepository.save(validAccount);
 
         return mapToAccountResponse(savedAccount);
+    }
+
+    public void sendWelcomeEmailPlain(String to, String name) {
+        String subject = "🌱 Chào mừng bạn đến với khu vườn thông minh!";
+        String text = """
+            Xin chào %s,
+
+            Chào mừng bạn đến với khu vườn thông minh của chúng tôi! 🌿
+            Chúng tôi rất vui khi có bạn đồng hành trong hành trình chăm sóc và phát triển khu vườn một cách hiệu quả và bền vững hơn.
+
+            Từ bây giờ, bạn có thể:
+            ✅ Theo dõi nhiệt độ, độ ẩm, ánh sáng của khu vườn theo thời gian thực
+            ✅ Bật/tắt thiết bị tưới tiêu tự động từ xa
+            ✅ Quản lý nhân viên, cây trồng và thiết bị một cách dễ dàng
+            ✅ Và còn nhiều tính năng thông minh khác đang chờ bạn khám phá!
+
+            Nếu bạn có bất kỳ câu hỏi nào hoặc cần hỗ trợ, đừng ngần ngại liên hệ với chúng tôi.
+
+            Chúc bạn có những mùa vụ bội thu cùng khu vườn của mình! 🌼
+
+            — Đội ngũ Smart Watering
+            """.formatted(name);
+
+        sendEmail(to, subject, text);
     }
 
     public List<AccountResponse> getAllAccounts() {
@@ -183,7 +210,7 @@ public class AccountService {
                 .firstName(account.getFirstName())
                 .lastName(account.getLastName())
                 .phoneNumber(account.getPhoneNumber())
-                .role(Role.FARMER)
+                .role(account.getRole())
                 .build();
     }
 

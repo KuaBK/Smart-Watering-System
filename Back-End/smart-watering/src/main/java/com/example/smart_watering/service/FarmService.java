@@ -8,6 +8,7 @@ import com.example.smart_watering.dto.response.farm.FarmResponse;
 import com.example.smart_watering.entity.Farm;
 import com.example.smart_watering.entity.FarmEmployee;
 import com.example.smart_watering.entity.account.Account;
+import com.example.smart_watering.entity.account.Role;
 import com.example.smart_watering.exception.AppException;
 import com.example.smart_watering.exception.ErrorCode;
 import com.example.smart_watering.repository.AccountRepository;
@@ -193,9 +194,19 @@ public class FarmService {
                 .map(FarmEmployee::getEmployee)
                 .toList();
 
-        return accountRepository.findAllNotInFarm(farm.getOwner(), existingEmployees);
+
+        return accountRepository.findAllNotInFarm(farm.getOwner(), existingEmployees).stream()
+                .filter(account -> account.getRole() == Role.FARMER)
+                .toList();
     }
 
+    public void toggleFarmActive(Long farmId) {
+        Farm farm = farmRepository.findById(farmId)
+                .orElseThrow(() -> new RuntimeException("Farm not found"));
+
+        farm.setIsActive(!Boolean.TRUE.equals(farm.getIsActive()));
+        farmRepository.save(farm);
+    }
 
     private FarmResponse toResponseDto(Farm farm) {
         String ownerName = null;

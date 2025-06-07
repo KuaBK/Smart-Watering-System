@@ -96,4 +96,10 @@ public class FarmController {
 
         return new ApiResponse<>(200, "People not in this farm", outsiderDTOs);
     }
+
+    @PutMapping("/{farmId}/toggle-active")
+    public ResponseEntity<ApiResponse<String>> toggleFarmActive(@PathVariable Long farmId) {
+        farmService.toggleFarmActive(farmId);
+        return ResponseEntity.ok(new ApiResponse<>(200, "Toggle farm active success", null));
+    }
 }
