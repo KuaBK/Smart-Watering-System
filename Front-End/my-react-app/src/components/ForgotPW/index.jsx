@@ -1,6 +1,7 @@
 import imgPlant from '../../image/img-plant.png';
 import locksvg from '../../assets/lock.svg';
 import mailsvg from '../../assets/mail.svg';
+import iconOtp from '../../assets/otp.svg'
 // import user from '../../assets/usericon.svg';
 // import phoneicon from '../../assets/phone.svg';
 import { useState } from 'react';
@@ -180,7 +181,7 @@ function ForgotPW() {
                                 onChange={(e) => setOTP(e.target.value)}
                             />
                             <span className={`absolute left-[10px] top-[15px] text-black transition-all ${otp ? "top-0 text-sm font-semibold text-black peer-valid:top-0 peer-valid:text-sm peer-valid:font-semibold peer-valid:text-black" : "peer-placeholder-shown:top-[15px] peer-placeholder-shown:text-base peer-focus:top-0 peer-focus:text-sm peer-focus:font-semibold peer-focus:text-black"}`}>OTP</span>
-                            <img src={mailsvg} alt="" />
+                            <img src={iconOtp} alt="" />
                         </div>
                     )}
                     {step3 && (

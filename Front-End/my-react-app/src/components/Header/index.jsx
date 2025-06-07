@@ -31,6 +31,7 @@ const Header = () => {
     const handleLogout = () => {
         localStorage.removeItem('jwtToken');
         localStorage.removeItem("garden");
+        localStorage.removeItem("")
         navigate('/signin');
     }
     const handleChangePW = () => {
@@ -51,7 +52,7 @@ const Header = () => {
         <div className="h-[96px] w-full bg-[rgba(44,135,108,1)] flex justify-between items-center px-[20px] shadow-[0px_5px_4px_0px_rgba(0,0,0,0.25)] ">
             <div className='flex gap-[20px] ml-[20px]'>
                 <img src={logo} alt="" />
-                <div className='font-baloo font-normal text-[50px] text-white '>ABC</div>
+                <div className='font-baloo font-normal text-[50px] text-white '>SWS</div>
             </div>
             <div className='flex gap-[20px]'>
                 {/* <img className="w-10 h-10 invert brightness-0 sepia saturate-200 hue-rotate-[20deg] contrast-150" src="/icon.svg" alt="icon" /> */}

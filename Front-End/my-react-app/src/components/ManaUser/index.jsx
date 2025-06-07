@@ -25,6 +25,7 @@ const ManaUser = () => {
         const response = await axios.get(`${API_BE}/account`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        console.log(response.data.result);
         setFarmer(response.data.result);
         setfilteredFarmers(response.data.result); // Khởi tạo luôn
       } catch (error) {
@@ -63,7 +64,7 @@ const ManaUser = () => {
               placeholder="Tìm kiếm khu vườn"
               value={searchQuery}
               onChange={handleSearchChange}
-              className="w-full border border-gray-300 rounded-lg py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <svg
               className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
@@ -81,7 +82,7 @@ const ManaUser = () => {
             </svg>
           </div>
         </div>
-        <div className=" flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto ">
           <table className="w-full">
             <thead className=" sticky top-0 bg-[rgba(218,255,224,1)]">
               <tr className="text-[20px] border-b-2 border-black">
@@ -96,11 +97,11 @@ const ManaUser = () => {
             <tbody className="">
               {filteredFarmers.map((user, index) => (
                 <tr key={index} className="text-center border-b border-black h-[80px] " onClick={()=>NaviDetail(user.id)}>
-                  <td className=" px-4 py-2">{index + 1}</td>
-                  <td className=" px-4 py-2">{user.lastName} {user.firstName}</td>
-                  <td className=" px-4 py-2">{user.email}</td>
-                  <td className=" px-4 py-2">{user.phoneNumber}</td>
-                  <td className=" px-4 py-2">{user.role}</td>
+                  <td className="px-4 py-2 ">{index + 1}</td>
+                  <td className="px-4 py-2 ">{user.lastName} {user.firstName}</td>
+                  <td className="px-4 py-2 ">{user.email}</td>
+                  <td className="px-4 py-2 ">{user.phoneNumber}</td>
+                  <td className="px-4 py-2 ">{user.role}</td>
                 </tr>
               ))}
             </tbody>

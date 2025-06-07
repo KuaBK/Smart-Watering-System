@@ -9,10 +9,10 @@ function Wellcome() {
         navigate('/register');
     }
     return (
-        <div className="relative h-screen w-full bg-cover bg-center container">
+        <div className="container relative w-full h-screen bg-center bg-cover">
             <div className="absolute inset-0 bg-black bg-opacity-30 backdrop-blur-md"></div>
             <div className="relative z-10 flex flex-col items-center justify-center h-full text-white blur-none">
-                <h1 className="text-[100px] font-sister font-normal">WELCOME TO ABCD</h1>
+                <h1 className="text-[80px] font-sister font-normal">WELCOME TO SMART WATERING SYSTEM</h1>
 
                 <button onClick={naviSignIn} className="font-baloo text-[65px] w-[700px] h-[120px] bg-white bg-opacity-20 px-10 py-3 font-semibold rounded-[20px] shadow-md hover:bg-opacity-30 transition mt-10">
                     SIGN IN

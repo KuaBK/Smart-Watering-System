@@ -15,14 +15,14 @@ const Card = ({ name, onRemove }) => {
             onMouseLeave={() => setIsHovered(false)}
         >
             {isHovered ? (
-                <button 
-                    onClick={onRemove} 
+                <button
+                    onClick={onRemove}
                     className="text-xl font-bold text-red-600 hover:text-red-800"
                 >
                     ×
                 </button>
             ) : (
-                <span className="text-center">{name}</span>
+                <span className="text-center truncate">{name}</span>
             )}
         </div>
     );
@@ -87,7 +87,7 @@ const FarmDetail = () => {
     const handleEmployeeSelectId = (name) => {
         setEmploySelectId(name);
     };
-    
+
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -146,7 +146,7 @@ const FarmDetail = () => {
 
             setInfoGarden(prev => ({
                 ...prev,
-                employee: [...prev.employee, { employeeName: employeeSelect }]
+                employee: [...prev.employee, { employeeEmail: employeeSelect }]
             }));
             setEmploySelect('');
             Swal.fire({
@@ -156,7 +156,7 @@ const FarmDetail = () => {
                 timer: 1500
             });
 
-            // TODO: Cập nhật lại danh sách farm hoặc state ở đây nếu cần
+            // TODO: Cập nhật lại danh sách khu vườnhoặc state ở đây nếu cần
 
         } catch (error) {
             console.error("Lỗi thêm nhân viên:", error);
@@ -234,50 +234,161 @@ const FarmDetail = () => {
         }
     };
 
-    const handleRemoveFarm = async () => {
-        try {
-            // Hiển thị loading
-            Swal.fire({
-                title: 'Đang xoá farm...',
-                allowOutsideClick: false,
-                didOpen: () => {
-                    Swal.showLoading();
-                }
-            });
+    // const handleRemovekhu vườn= async () => {
+    //     try {
+    //         // Hiển thị loading
+    //         Swal.fire({
+    //             title: 'Đang xoá farm...',
+    //             allowOutsideClick: false,
+    //             didOpen: () => {
+    //                 Swal.showLoading();
+    //             }
+    //         });
 
-            const response = await axios.delete(`${API_BE}/farm/${idGarden}`, {
+    //         const response = await axios.delete(`${API_BE}/farm/${idGarden}`, {
+    //             headers: { Authorization: `Bearer ${token}` },
+    //         });
+
+    //         // Khi xoá thành công
+    //         if (response.status == 200) {
+    //             Swal.close();
+    //             Swal.fire({
+    //                 icon: 'success',
+    //                 title: 'Đã xoá khu vườnthành công!',
+    //                 showConfirmButton: false,
+    //                 timer: 1500
+    //             });
+    //             handleNaviOver();
+    //         }
+
+    //         // TODO: Cập nhật lại danh sách khu vườnhoặc state ở đây nếu cần
+
+    //     } catch (error) {
+    //         console.error("Lỗi xoá farm:", error);
+    //         Swal.close();
+
+    //         Swal.fire({
+    //             icon: 'error',
+    //             title: 'Lỗi khi xoá farm!',
+    //             text: error?.response?.data?.message || 'Đã có lỗi xảy ra',
+    //         });
+    //     }
+
+    // };
+    const handleRemoveFarm = async () => {
+        const confirmResult = await Swal.fire({
+            title: 'Bạn có chắc chắn muốn xoá khu vườn này?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Xoá',
+            cancelButtonText: 'Huỷ',
+        });
+
+        if (confirmResult.isConfirmed) {
+            try {
+                // Hiển thị loading
+                Swal.fire({
+                    title: 'Đang xoá farm...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const response = await axios.delete(`${API_BE}/farm/${idGarden}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                // Khi xoá thành công
+                if (response.status == 200) {
+                    Swal.close();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Đã xoá khu vườn thành công!',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                    handleNaviOver();
+                }
+
+                // TODO: Cập nhật lại danh sách khu vườnhoặc state ở đây nếu cần
+
+            } catch (error) {
+                console.error("Lỗi xoá farm:", error);
+                Swal.close();
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi khi xoá farm!',
+                    text: error?.response?.data?.message || 'Đã có lỗi xảy ra',
+                });
+            }
+        }
+    };
+    const handleActiveGarden = async (e) => {
+        const isChecked = e.target.checked;
+
+        const confirmResult = await Swal.fire({
+            title: isChecked ? 'Kích hoạt khu vườn?' : 'Vô hiệu hoá khu vườn?',
+            text: isChecked ? 'Bạn có chắc muốn kích hoạt khu vườn này?' : 'Bạn có chắc muốn vô hiệu hoá khu vườn này?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Huỷ',
+        });
+
+        if (!confirmResult.isConfirmed) {
+            // Nếu huỷ, hoàn tác lại checkbox
+            e.target.checked = !isChecked;
+            return;
+        }
+
+        try {
+            await axios.put(`${API_BE}/farm/${idGarden}/toggle-active`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
-            // Khi xoá thành công
-            if (response.status == 200) {
-                Swal.close();
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Đã xoá farm thành công!',
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                handleNaviOver();
-            }
+            setInfoGarden((prev) => ({ ...prev, isActive: isChecked }));
 
-            // TODO: Cập nhật lại danh sách farm hoặc state ở đây nếu cần
+            Swal.fire({
+                icon: 'success',
+                title: isChecked ? 'Đã kích hoạt khu vườn!' : 'Đã vô hiệu hoá khu vườn!',
+                timer: 1500,
+                showConfirmButton: false
+            });
 
         } catch (error) {
-            console.error("Lỗi xoá farm:", error);
-            Swal.close();
+            console.error("Lỗi khi cập nhật trạng thái khu vườn:", error);
+
+            // Hoàn tác lại checkbox nếu lỗi
+            e.target.checked = !isChecked;
 
             Swal.fire({
                 icon: 'error',
-                title: 'Lỗi khi xoá farm!',
+                title: 'Lỗi khi cập nhật trạng thái khu vườn!',
                 text: error?.response?.data?.message || 'Đã có lỗi xảy ra',
             });
         }
-
     };
+
     return (
         <div className="bg-white flex-1 px-[40px] py-[30px] box-border max-h-[100%] overflow-y-auto w-[100%] ">
-            <div className="h-[100%] flex flex-col">
+            <div className="relative h-[100%] flex flex-col">
+                <div className="absolute top-4 right-4">
+                <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={infoGarden?.isActive}
+                        onChange={handleActiveGarden}
+                        className="sr-only peer"
+                    />
+                    <div className="w-[70px] h-[40px] bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-green-500 rounded-full peer peer-checked:bg-green-500"></div>
+                    <span className="absolute left-2 top-[6px] w-[30px] h-[30px] bg-white rounded-full transition-transform peer-checked:translate-x-6"></span>
+                </label>
+                </div>
                 <h1 className="text-[50px] font-bold mb-4 text-start ">Khu vườn {infoGarden?.name}</h1>
                 <div className="flex flex-wrap flex-1 gap-8">
                     {/* Left Section */}
@@ -291,7 +402,7 @@ const FarmDetail = () => {
                             <div className="flex gap-[10px] flex-wrap ">
                                 {infoGarden?.employee?.map((item) => (
                                     <div onClick={() => handleRemoveEmployee(item.employeeId)} key={item.employeeId}>
-                                        <Card name={item.employeeName } />
+                                        <Card name={item.employeeEmail} />
 
                                     </div>
                                 ))}
